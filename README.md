@@ -1,1 +1,1 @@
-# DenonController
+# MiniacController
