@@ -9,7 +9,11 @@ if (miniac === undefined)
 {
   throw new Error ("App.setup: No miniac plugin found.");
 }
-miniac.connect();
+miniac.connect(() =>
+{
+  miniac.amp_RequestPowerState();
+  miniac.amp_RequestSelectedInput();
+});
 
 </script>
 

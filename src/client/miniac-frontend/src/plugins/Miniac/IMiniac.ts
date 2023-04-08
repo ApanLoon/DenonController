@@ -6,11 +6,16 @@ export interface IMiniac
     options? : MiniacOptions;
     isConnected : Ref<boolean>; 
 
-    ampIsOn : Ref<boolean>;
+    amp_IsOn          : Ref<boolean>;
+    amp_SelectedInput : Ref<string>;
 
-    connect() : void;
+    connect(connectHandler? : () => void) : void;
 
-    requestAmpPowerOn() : void;
-    requestAmpPowerOff() : void;
-    requestAmpPowerToggle() : void;
+    amp_RequestPowerState() : void;
+    amp_RequestPowerOn() : void;
+    amp_RequestPowerOff() : void;
+    amp_RequestPowerToggle() : void;
+
+    amp_RequestSelectedInput() : void;
+    amp_SetSelectedInput(input : string) : void;
 }

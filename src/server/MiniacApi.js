@@ -4,8 +4,11 @@ import { EventEmitter } from 'node:events';
 
 export class MiniacEvent
 {
-    static get RequestAmpPowerState() { return "amp:powerstate";    }
-    static get SetAmpPowerState()     { return "amp:setpowerstate"; }
+    static get Amp_RequestPowerState()    { return "amp:powerstate";       }
+    static get Amp_SetPowerState()        { return "amp:setpowerstate";    }
+
+    static get Amp_RequestSelectedInput() { return "amp:selectedinput";    }
+    static get Amp_SetSelectedInput()     { return "amp:setselectedinput"; }
 }
 
 export class MiniacApi extends EventEmitter
@@ -31,14 +34,17 @@ export class MiniacApi extends EventEmitter
                 const msg = JSON.parse(data);
                 switch (msg.type)
                 {
-                    case "Amp:RequestPowerState": this.emit(MiniacEvent.RequestAmpPowerState);       break;
-                    case "Amp:SetPowerState":     this.emit(MiniacEvent.SetAmpPowerState, msg.isOn); break;
+                    case "Amp:RequestPowerState":    this.emit(MiniacEvent.Amp_RequestPowerState);           break;
+                    case "Amp:SetPowerState":        this.emit(MiniacEvent.Amp_SetPowerState, msg.isOn);     break;
+
+                    case "Amp:RequestSelectedInput": this.emit(MiniacEvent.Amp_RequestSelectedInput);        break;
+                    case "Amp:SetSelectedInput":     this.emit(MiniacEvent.Amp_SetSelectedInput, msg.input); break;
                 }
             });
         });
     }
 
-    sendAmpPowerState (isOn)
+    amp_SendPowerState (isOn)
     {
         if (this.socket === undefined || this.socket === null || this.socket.closed === true)
         {
@@ -51,4 +57,19 @@ export class MiniacApi extends EventEmitter
             isOn: isOn
         }));
     }
+
+    amp_SendSelectedInput (input)
+    {
+        if (this.socket === undefined || this.socket === null || this.socket.closed === true)
+        {
+            return;
+        }
+
+        this.socket.send(JSON.stringify(
+        {
+            type: "Amp:SelectedInput",
+            input: input
+        }));
+    }
+
 }

@@ -7,7 +7,8 @@ export class Miniac implements IMiniac
     public options : MiniacOptions;
     public isConnected : Ref<boolean> = ref(false); 
 
-    public ampIsOn : Ref<boolean> = ref(false); 
+    public amp_IsOn          : Ref<boolean> = ref(false);
+    public amp_SelectedInput : Ref<string>  = ref("");
 
     private _socket? : WebSocket;
 
@@ -16,7 +17,7 @@ export class Miniac implements IMiniac
         this.options = options;
     }
 
-    public connect() : void
+    public connect(connectHandler? : () => void) : void
     {
         console.log(`Miniac: Connecting to ${this.options.host}:${this.options.port}...`);
 
@@ -25,8 +26,10 @@ export class Miniac implements IMiniac
         this._socket.addEventListener("open", () => 
         {
             console.log("Miniac: Connected");
-
-            this.requestAmpPowerState();
+            if (connectHandler)
+            {
+                connectHandler();
+            }
         });
         
         this._socket.addEventListener("message", ({ data }) => 
@@ -35,34 +38,51 @@ export class Miniac implements IMiniac
         
             switch (msg.type)
             {
-                case "Amp:PowerState": this.ampIsOn.value = msg.isOn; console.log(`Miniac: Amplifier power is ${msg.isOn as boolean === true ? "on" : "in standby"}.`); break;
+                case "Amp:PowerState":    this.amp_IsOn.value          = msg.isOn;  console.log(`Miniac: Amplifier power is ${msg.isOn as boolean === true ? "on" : "in standby"}.`); break;
+                case "Amp:SelectedInput": this.amp_SelectedInput.value = msg.input; console.log(`Miniac: Amplifier input is ${msg.input}.`); break;
             }
         });
 
         this._socket.onclose = error =>
         {
             console.log("Miniac: Connection closed.", error);
-            setTimeout(()=>this.connect(), 1000);
+            setTimeout(()=>this.connect(connectHandler), 1000);
         }
     }
 
-    public requestAmpPowerState()
+    public amp_RequestPowerState() : void
     {
+        console.log("Miniac.amp_RequestPowerState");
         this._socket?.send(JSON.stringify({ type: "Amp:RequestPowerState" }));
     }
 
-    requestAmpPowerOn() : void
+    amp_RequestPowerOn() : void
     {
+        console.log("Miniac.amp_RequestPowerOn");
         this._socket?.send(JSON.stringify({ type: "Amp:SetPowerState", isOn: true }));
     }
 
-    requestAmpPowerOff() : void
+    amp_RequestPowerOff() : void
     {
+        console.log("Miniac.amp_RequestPowerOff");
         this._socket?.send(JSON.stringify({ type: "Amp:SetPowerState", isOn: false }));
     }
 
-    requestAmpPowerToggle() : void
+    amp_RequestPowerToggle() : void
     {
-        this.ampIsOn.value ? this.requestAmpPowerOff() : this.requestAmpPowerOn();
+        this.amp_IsOn.value ? this.amp_RequestPowerOff() : this.amp_RequestPowerOn();
     }
+
+    public amp_RequestSelectedInput() : void
+    {
+        console.log("Miniac.amp_RequestSelectedInput");
+        this._socket?.send(JSON.stringify({ type: "Amp:RequestSelectedInput" }));
+    }
+
+    public amp_SetSelectedInput(input : string) : void
+    {
+        console.log("Miniac.amp_SetelectedInput ", input);
+        this._socket?.send(JSON.stringify({ type: "Amp:SetSelectedInput", input: input }));
+    }
+
 }
