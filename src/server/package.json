@@ -1,0 +1,25 @@
+{
+  "name": "miniac-controller",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "App.js",
+  "scripts": {
+    "serve": "node App.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ApanLoon/MiniacController.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ApanLoon/MiniacController/issues"
+  },
+  "homepage": "https://github.com/ApanLoon/MiniacController#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.6.1"
+  }
+}
