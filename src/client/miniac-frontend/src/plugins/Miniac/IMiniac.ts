@@ -1,5 +1,7 @@
 import type { Ref } from "vue";
 import type { MiniacOptions } from "./MiniacOptions";
+import type { PlayerStatus } from "./PlayerStatus";
+import type { Song } from "./Song";
 
 export interface IMiniac
 {
@@ -21,15 +23,15 @@ export interface IMiniac
     amp_SetSelectedInput(input : string) : void;
 
     // Player:
-    player_IsPlaying     : Ref<boolean>;
-    player_CurrentSong   : Ref<string>; 
-    player_CurrentAlbum  : Ref<string>; 
-    player_CurrentArtist : Ref<string>; 
+    player_Status        : PlayerStatus;
+    player_CurrentSong   : Song;
 
-    player_RequestPlay() : void;
-    player_RequestPause() : void;
-    player_RequestStop() : void;
-    player_RequestPlayToggle() : void;
-    player_RequestPrev() : void;
-    player_RequestNext() : void;
+    player_RequestStatus()      : void;
+    player_RequestCurrentSong() : void;
+    player_RequestPlay()        : void;
+    player_RequestPause()       : void;
+    player_RequestStop()        : void;
+    player_RequestPlayToggle()  : void;
+    player_RequestPrev()        : void;
+    player_RequestNext()        : void;
 }

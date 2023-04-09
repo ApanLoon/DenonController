@@ -1,6 +1,8 @@
 import type { IMiniac } from "./IMiniac";
 import type { MiniacOptions } from "./MiniacOptions";
-import { ref, type Ref } from "vue";
+import { ref, reactive, type Ref } from "vue";
+import { PlayerStatus } from "./PlayerStatus";
+import { Song } from "./Song";
 
 export class Miniac implements IMiniac
 {
@@ -36,8 +38,11 @@ export class Miniac implements IMiniac
         
             switch (msg.type)
             {
-                case "Amp:PowerState":    this.amp_IsOn.value          = msg.isOn;  console.log(`Miniac: Amplifier power is ${msg.isOn as boolean === true ? "on" : "in standby"}.`); break;
-                case "Amp:SelectedInput": this.amp_SelectedInput.value = msg.input; console.log(`Miniac: Amplifier input is ${msg.input}.`); break;
+                case "Amp:PowerState":     this.amp_IsOn.value          = msg.isOn;  console.log(`Miniac: Amplifier power is ${msg.isOn as boolean === true ? "on" : "in standby"}.`); break;
+                case "Amp:SelectedInput":  this.amp_SelectedInput.value = msg.input; console.log(`Miniac: Amplifier input is ${msg.input}.`); break;
+
+                case "Player:Status":      console.log("Miniac: Player status",       msg.status); this.player_Status.copyFrom(msg.status);     break;
+                case "Player:CurrentSong": console.log("Miniac: Player current song", msg.song);   this.player_CurrentSong.copyFrom(msg.song);  break;
             }
         });
 
@@ -90,45 +95,54 @@ export class Miniac implements IMiniac
 
 
     /// Player:
-    public player_IsPlaying     : Ref<boolean>  = ref(false);
-    public player_CurrentSong   : Ref<string>   = ref("Bogus song");
-    public player_CurrentAlbum  : Ref<string>   = ref("Bogus album");
-    public player_CurrentArtist : Ref<string>   = ref("Bogus artist");
+    public player_Status        = reactive(new PlayerStatus());
+    public player_CurrentSong   = reactive(new Song());
+
+    public player_RequestStatus()      : void
+    {
+        console.log("Miniac.player_RequestStatus");
+        this._socket?.send(JSON.stringify({ type: "Player:RequestStatus" }));
+    }
+
+    public player_RequestCurrentSong() : void
+    {
+        console.log("Miniac.player_RequestCurrentSong");
+        this._socket?.send(JSON.stringify({ type: "Player:RequestCurrentSong" }));
+    }
 
     public player_RequestPlay() : void
     {
         console.log("Miniac.player_RequestPlay");
-        this.player_IsPlaying.value = true;
+        this._socket?.send(JSON.stringify({ type: "Player:Play" }));
     }
 
     public player_RequestPause() : void
     {
         console.log("Miniac.player_RequestPause");
-        this.player_IsPlaying.value = false;
+        this._socket?.send(JSON.stringify({ type: "Player:Pause" }));
     }
 
     public player_RequestStop() : void
     {
         console.log("Miniac.player_RequestStop");
-        this.player_IsPlaying.value = false;
+        this._socket?.send(JSON.stringify({ type: "Player:Stop" }));
     }
 
     public player_RequestPlayToggle() : void
     {
         console.log("Miniac.player_RequestPlayToggle");
-        this.player_IsPlaying.value ? this.player_RequestPause() : this.player_RequestPlay();
+        this.player_Status.isPlaying ? this.player_RequestPause() : this.player_RequestPlay();
     }
 
     public player_RequestPrev() : void
     {
         console.log("Miniac.player_RequestPrev");
-
+        this._socket?.send(JSON.stringify({ type: "Player:Prev" }));
     }
 
     public player_RequestNext() : void
     {
         console.log("Miniac.player_RequestNext");
-
+        this._socket?.send(JSON.stringify({ type: "Player:Next" }));
     }
-
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, computed } from "vue";
+import { inject } from "vue";
 import type {IMiniac} from "../plugins/Miniac/IMiniac";
 import IconPrev from "./icons/IconPrev.vue";
 import IconPlay from "./icons/IconPlay.vue";
@@ -16,25 +16,28 @@ if (miniac === undefined)
 
 <template>
   <div class="player">
-    <div style="grid-area: song;"   class="song"  >{{ miniac.player_CurrentSong.value   }}</div>
-    <div style="grid-area: album;"  class="album" >{{ miniac.player_CurrentAlbum.value  }}</div>
-    <div style="grid-area: artist;" class="artist">{{ miniac.player_CurrentArtist.value }}</div>
+    <div style="grid-area: song;"   class="song"  >{{ miniac.player_CurrentSong.title   }}</div>
+    <div style="grid-area: album;"  class="album" >{{ miniac.player_CurrentSong.album  }}</div>
+    <div style="grid-area: artist;" class="artist">{{ miniac.player_CurrentSong.artist }}</div>
 
-    <button style="grid-area: prev;">
+    <button style="grid-area: prev;"
+            @click="miniac.player_RequestPrev()">
         <IconPrev />
     </button>
 
     <button style="grid-area: play;"
             @click="miniac.player_RequestPlayToggle()">
-        <IconPlay  v-if="!miniac.player_IsPlaying.value" />
-        <IconPause v-if="miniac.player_IsPlaying.value" />
+        <IconPlay  v-if="!miniac.player_Status.isPlaying" />
+        <IconPause v-if="miniac.player_Status.isPlaying" />
     </button>
 
-    <button style="grid-area: stop;">
+    <button style="grid-area: stop;"
+            @click="miniac.player_RequestStop()">
         <IconStop />
     </button>
 
-    <button style="grid-area: next;">
+    <button style="grid-area: next;"
+            @click="miniac.player_RequestNext()">
         <IconNext />
     </button>
   </div>
