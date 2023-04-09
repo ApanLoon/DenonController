@@ -6,7 +6,7 @@ import IconPower from "./icons/IconPower.vue";
 const miniac = inject<IMiniac>("miniac");
 if (miniac === undefined)
 {
-  throw new Error ("App.setup: No miniac plugin found.");
+  throw new Error ("Amplifier.setup: No miniac plugin found.");
 }
 
 const amp_SelectedInput = computed(() =>
@@ -31,8 +31,8 @@ const amp_SelectedInput = computed(() =>
 .amplifier
 {
   font-size: 0.6rem;
-
   display: grid;
+  grid-template-columns: 4.5rem auto;
   grid-template-areas: 
     "power-button input"
     "power-button x"
@@ -42,15 +42,13 @@ const amp_SelectedInput = computed(() =>
 
 .power-button
 {
+    display: inline-block;
     background-color: black;
     border: 2px solid var(--color-text);
     border-radius: 50%;
     color: #333;
     width: 4rem;
     height: 4rem;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
     margin-right: 0.5rem;
 }
 

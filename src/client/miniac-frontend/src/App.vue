@@ -3,6 +3,7 @@ import { inject } from "vue";
 import type {IMiniac} from "./plugins/Miniac/IMiniac";
 import Amplifier from "./components/Amplifier.vue";
 import Clock from "./components/Clock.vue";
+import Player from "./components/Player.vue";
 
 const miniac = inject<IMiniac>("miniac");
 if (miniac === undefined)
@@ -18,28 +19,23 @@ miniac.connect(() =>
 </script>
 
 <template>
-  <header>
-    <Amplifier />
-  </header>
-
   <main>
-    <Clock />
+    <Amplifier style="grid-area: amplifier;" />
+    <Clock style="grid-area: clock;" />
+    <Player style="grid-area: player;" />
   </main>
 </template>
 
 <style scoped>
-header
+main
 {
-  line-height: 1.5;
+  display: grid;
+  grid-template-areas: "amplifier" "clock" "player";
+  gap: 1em;
 }
 
-@media (min-width: 1024px)
+main > *
 {
-  header
-  {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
+  border: 1px solid rgb(70, 0, 0);
 }
 </style>

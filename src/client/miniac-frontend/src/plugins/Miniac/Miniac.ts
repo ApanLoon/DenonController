@@ -4,11 +4,9 @@ import { ref, type Ref } from "vue";
 
 export class Miniac implements IMiniac
 {
+    /// General:
     public options : MiniacOptions;
     public isConnected : Ref<boolean> = ref(false); 
-
-    public amp_IsOn          : Ref<boolean> = ref(false);
-    public amp_SelectedInput : Ref<string>  = ref("");
 
     private _socket? : WebSocket;
 
@@ -50,25 +48,30 @@ export class Miniac implements IMiniac
         }
     }
 
+
+    /// Amplifier:
+    public amp_IsOn          : Ref<boolean> = ref(false);
+    public amp_SelectedInput : Ref<string>  = ref("");
+
     public amp_RequestPowerState() : void
     {
         console.log("Miniac.amp_RequestPowerState");
         this._socket?.send(JSON.stringify({ type: "Amp:RequestPowerState" }));
     }
 
-    amp_RequestPowerOn() : void
+    public amp_RequestPowerOn() : void
     {
         console.log("Miniac.amp_RequestPowerOn");
         this._socket?.send(JSON.stringify({ type: "Amp:SetPowerState", isOn: true }));
     }
 
-    amp_RequestPowerOff() : void
+    public amp_RequestPowerOff() : void
     {
         console.log("Miniac.amp_RequestPowerOff");
         this._socket?.send(JSON.stringify({ type: "Amp:SetPowerState", isOn: false }));
     }
 
-    amp_RequestPowerToggle() : void
+    public amp_RequestPowerToggle() : void
     {
         this.amp_IsOn.value ? this.amp_RequestPowerOff() : this.amp_RequestPowerOn();
     }
@@ -83,6 +86,49 @@ export class Miniac implements IMiniac
     {
         console.log("Miniac.amp_SetelectedInput ", input);
         this._socket?.send(JSON.stringify({ type: "Amp:SetSelectedInput", input: input }));
+    }
+
+
+    /// Player:
+    public player_IsPlaying     : Ref<boolean>  = ref(false);
+    public player_CurrentSong   : Ref<string>   = ref("Bogus song");
+    public player_CurrentAlbum  : Ref<string>   = ref("Bogus album");
+    public player_CurrentArtist : Ref<string>   = ref("Bogus artist");
+
+    public player_RequestPlay() : void
+    {
+        console.log("Miniac.player_RequestPlay");
+        this.player_IsPlaying.value = true;
+    }
+
+    public player_RequestPause() : void
+    {
+        console.log("Miniac.player_RequestPause");
+        this.player_IsPlaying.value = false;
+    }
+
+    public player_RequestStop() : void
+    {
+        console.log("Miniac.player_RequestStop");
+        this.player_IsPlaying.value = false;
+    }
+
+    public player_RequestPlayToggle() : void
+    {
+        console.log("Miniac.player_RequestPlayToggle");
+        this.player_IsPlaying.value ? this.player_RequestPause() : this.player_RequestPlay();
+    }
+
+    public player_RequestPrev() : void
+    {
+        console.log("Miniac.player_RequestPrev");
+
+    }
+
+    public player_RequestNext() : void
+    {
+        console.log("Miniac.player_RequestNext");
+
     }
 
 }
