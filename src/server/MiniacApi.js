@@ -1,6 +1,7 @@
 
 import { WebSocketServer } from "ws";
 import { EventEmitter } from 'node:events';
+import { randomUUID } from "crypto";
 
 export class MiniacEvent
 {
@@ -19,35 +20,80 @@ export class MiniacEvent
     static get Player_Prev()               { return "player:prev";          }
 }
 
+class Connection
+{
+    id = randomUUID();
+    socket;
+
+    constructor(socket, messageParser, closeHandler)
+    {
+        this.socket = socket;
+        socket.on("message", messageParser);
+        socket.on("close", event => closeHandler(event, this));
+    }
+}
+
+class ConnectionCollection
+{
+    connections = [];
+
+    add (connection)
+    {
+        let c = this.connections.find(x=>x.id === connection.id);
+        if (c)
+        {
+            return;
+        }
+        this.connections.push (connection);
+    }
+
+    remove(connection)
+    {
+        this.connections.filter((value, index, arr) =>
+        {
+            if (value.id === connection.id)
+            {
+                arr.splice(index, 1);
+            }
+        });
+    }
+
+    sendToAll(msg)
+    {
+        this.connections.forEach(connection =>
+        {
+            if (connection.socket === undefined || connection.socket === null || connection.socket.closed === true)
+            {
+                return;
+            }
+            connection.socket.send(msg);
+        });
+    }
+}
+
 export class MiniacApi extends EventEmitter
 {
-    socket;
+    connections = new ConnectionCollection();
 
     constructor()
     {
         super();
 
-        this.socket = null;
         this.server = new WebSocketServer({ port: 4000 });
-        const self = this;
 
         this.server.on("connection", socket =>
         {
-            console.log("MiniacApi: Client connected");
-            self.socket = socket;
-
-            // receive a message from the client
-            socket.on("message", data =>
+            let connection = new Connection(socket, data =>
             {
                 const msg = JSON.parse(data);
                 switch (msg.type)
                 {
                     case "Amp:RequestPowerState":     this.emit(MiniacEvent.Amp_RequestPowerState);           break;
                     case "Amp:SetPowerState":         this.emit(MiniacEvent.Amp_SetPowerState, msg.isOn);     break;
-
+    
                     case "Amp:RequestSelectedInput":  this.emit(MiniacEvent.Amp_RequestSelectedInput);        break;
                     case "Amp:SetSelectedInput":      this.emit(MiniacEvent.Amp_SetSelectedInput, msg.input); break;
-
+    
                     case "Player:RequestStatus":      this.emit(MiniacEvent.Player_RequestStatus);            break;
                     case "Player:RequestCurrentSong": this.emit(MiniacEvent.Player_RequestCurrentSong);       break;
                     case "Player:Play":               this.emit(MiniacEvent.Player_Play);                     break;
@@ -56,7 +102,16 @@ export class MiniacApi extends EventEmitter
                     case "Player:Next":               this.emit(MiniacEvent.Player_Next);                     break;
                     case "Player:Prev":               this.emit(MiniacEvent.Player_Prev);                     break;
                 }
+            },
+            (event, connection) =>
+            {
+                console.log ("MiniacApi: Client disconnected.", connection.id);
+                this.connections.remove(connection);
             });
+
+            console.log("MiniacApi: Client connected", connection.id);
+
+            this.connections.add(connection);
         });
     }
 
@@ -65,12 +120,7 @@ export class MiniacApi extends EventEmitter
 
     amp_SendPowerState (isOn)
     {
-        if (this.socket === undefined || this.socket === null || this.socket.closed === true)
-        {
-            return;
-        }
-
-        this.socket.send(JSON.stringify(
+        this.connections.sendToAll(JSON.stringify(
         {
             type: "Amp:PowerState",
             isOn: isOn
@@ -79,12 +129,7 @@ export class MiniacApi extends EventEmitter
 
     amp_SendSelectedInput (input)
     {
-        if (this.socket === undefined || this.socket === null || this.socket.closed === true)
-        {
-            return;
-        }
-
-        this.socket.send(JSON.stringify(
+        this.connections.sendToAll(JSON.stringify(
         {
             type: "Amp:SelectedInput",
             input: input
@@ -98,12 +143,7 @@ export class MiniacApi extends EventEmitter
     player_SendStatus (status)
     {
         //console.log("MiniacApi.player_SendStatus: ", status);
-        if (this.socket === undefined || this.socket === null || this.socket.closed === true)
-        {
-            return;
-        }
-
-        this.socket.send(JSON.stringify(
+        this.connections.sendToAll(JSON.stringify(
         {
             type: "Player:Status",
             status: status
@@ -113,16 +153,10 @@ export class MiniacApi extends EventEmitter
     player_SendCurrentSong (song)
     {
         //console.log("MiniacApi.player_SendCurrentSong: ", song);
-        if (this.socket === undefined || this.socket === null || this.socket.closed === true)
-        {
-            return;
-        }
-
-        this.socket.send(JSON.stringify(
+        this.connections.sendToAll(JSON.stringify(
         {
             type: "Player:CurrentSong",
             song: song
         }));
     }
-
 }
