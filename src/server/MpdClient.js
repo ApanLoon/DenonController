@@ -5,6 +5,11 @@ export class MpdOptions
 {
     host;
     port = 6600;
+
+    constructor(init)
+    {
+        Object.assign(this, init);
+    }
 }
 
 export const MpdEvent = Object.freeze(
@@ -234,7 +239,7 @@ export class MpdClient extends EventEmitter
     constructor(options)
     {
         super();
-        this.options = options;
+        this.options = new MpdOptions(options);
         this.socket = new Socket();
     }
 

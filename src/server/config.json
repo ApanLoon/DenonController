@@ -1,0 +1,34 @@
+{
+    "miniac_Port": 4000,
+    
+    "amp_Host": "192.168.0.52",
+    "amp_Port": 23,
+    "amp_InputNames":
+    [
+        {"denon": "PHONO"     , "miniac": "PHONO"     },
+        {"denon": "CD"        , "miniac": "CD"        },
+        {"denon": "DVD"       , "miniac": "DVD"       },
+        {"denon": "BD"        , "miniac": "BLURAY"    },
+        {"denon": "TV"        , "miniac": "TV"        },
+        {"denon": "SAT/CBL"   , "miniac": "SAT/CBL"   },
+        {"denon": "MPLAY"     , "miniac": "SHIELD"    },
+        {"denon": "GAME"      , "miniac": "MINIAC"    },
+        {"denon": "TUNER"     , "miniac": "TUNER"     },
+        {"denon": "HDRADIO"   , "miniac": "HDRADIO"   },
+        {"denon": "IRADIO"    , "miniac": "IRADIO"    },
+        {"denon": "SERVER"    , "miniac": "SERVER"    },
+        {"denon": "FAVORITES" , "miniac": "FAVORITES" },
+        {"denon": "AUX1"      , "miniac": "AUX1"      },
+        {"denon": "AUX2"      , "miniac": "AUX2"      },
+        {"denon": "AUX3"      , "miniac": "AUX3"      },
+        {"denon": "AUX4"      , "miniac": "AUX4"      },
+        {"denon": "AUX5"      , "miniac": "AUX5"      },
+        {"denon": "AUX6"      , "miniac": "AUX6"      },
+        {"denon": "AUX7"      , "miniac": "AUX7"      },
+        {"denon": "NET"       , "miniac": "NET"       },
+        {"denon": "BT"        , "miniac": "BLUETOOTH" }
+    ],
+
+    "player_Host": "miniac.local",
+    "player_Port": 6600
+}

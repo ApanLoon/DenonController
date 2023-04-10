@@ -3,6 +3,16 @@ import { WebSocketServer } from "ws";
 import { EventEmitter } from 'node:events';
 import { randomUUID } from "crypto";
 
+export class MiniacOptions
+{
+    port = 4000;
+
+    constructor(init)
+    {
+        Object.assign(this, init);
+    }
+}
+
 export class MiniacEvent
 {
     static get Amp_RequestPowerState()     { return "amp:powerstate";       }
@@ -73,13 +83,14 @@ class ConnectionCollection
 
 export class MiniacApi extends EventEmitter
 {
-    connections = new ConnectionCollection();
-
-    constructor()
+    constructor(options)
     {
         super();
 
-        this.server = new WebSocketServer({ port: 4000 });
+        this.options = new MiniacOptions(options);
+        this.connections = new ConnectionCollection();
+
+        this.server = new WebSocketServer({ port: this.options.port });
 
         this.server.on("connection", socket =>
         {
