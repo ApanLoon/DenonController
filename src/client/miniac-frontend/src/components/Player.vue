@@ -54,7 +54,6 @@ setInterval(()=>{ if (miniac.player_Status.isPlaying) miniac.player_Status.elaps
 .player
 {
   font-size: 1rem;
-  text-align: right;
 
   display: grid;
   grid-template-areas: 
@@ -64,19 +63,23 @@ setInterval(()=>{ if (miniac.player_Status.isPlaying) miniac.player_Status.elaps
     "progress progress progress progress"
     "prev play next stop"
   ;
+  justify-items: center;
 }
 
 .song
 {
-    font-size: 2rem;
+  justify-self: right;
+  font-size: 2rem;
 }
 .artist
 {
-    font-size: 1.5rem;
+  justify-self: right;
+  font-size: 1.5rem;
 }
 .album
 {
-    font-size: 0.8rem;
+  justify-self: right;
+  font-size: 0.8rem;
 }
 
 progress[value]
