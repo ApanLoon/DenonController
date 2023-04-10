@@ -47,23 +47,9 @@ const amp_SelectedInput = computed(() =>
   ;
 }
 
-button
-{
-    display: inline-block;
-    background-color: black;
-    color: #333;
-    border: 2px solid var(--color-text);
-    border-radius: 50%;
-    width: 4rem;
-    height: 4rem;
-
-    text-align: center;
-    text-decoration: none;
-}
-
 .power-on svg
 {
-    color: blue;
+    color: var(--color-power);
     filter: drop-shadow(0 0 0.2rem currentColor);
 }
 </style>

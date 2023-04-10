@@ -93,33 +93,12 @@ progress[value]
 progress[value]::-webkit-progress-bar
 {
   border-radius: 1rem;
-  background-color: #333;
+  background-color: var(--color-background-mute);
   color: var(--color-text);
 }
 progress[value]::-webkit-progress-value
 {
   border-radius: 1rem;
   background-color: var(--color-text);
-}
-
-button
-{
-    display: inline-block;
-    background-color: black;
-    color: #333;
-    border: 2px solid var(--color-text);
-    border-radius: 50%;
-    width: 4rem;
-    height: 4rem;
-
-    text-align: center;
-    text-decoration: none;
-    margin-right: 0.5rem;
-}
-
-.play-on svg
-{
-    color: blue;
-    filter: drop-shadow(0 0 0.2rem currentColor);
 }
 </style>

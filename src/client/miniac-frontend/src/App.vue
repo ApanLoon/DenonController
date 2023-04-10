@@ -38,6 +38,6 @@ main
 
 main > *
 {
-  border: 1px solid rgb(70, 0, 0);
+  border: 1px solid var(--color-debug-border);
 }
 </style>

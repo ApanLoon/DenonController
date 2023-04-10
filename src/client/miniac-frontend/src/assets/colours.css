@@ -1,0 +1,44 @@
+/* colour palette */
+:root
+{
+  --theme-c-white:      #ffffff;
+  --theme-c-white-soft: #e7e7e7;
+  --theme-c-white-mute: #d7d7d7;
+  --theme-c-white-dark: #979797;
+
+  --theme-c-black:      #000000;
+  --theme-c-black-soft: #181818;
+  --theme-c-black-mute: #282828;
+
+  --theme-c-indigo:     #2c3e50;
+
+  --theme-c-red:        #ff0000;
+  --theme-c-red-dark:   #460000;
+
+  --theme-c-blue:       #0000ff;
+}
+
+/* semantic color variables for this project */
+:root
+{
+  --color-background:      var(--theme-c-white-soft);
+  --color-background-soft: var(--theme-c-white);
+  --color-background-mute: var(--theme-c-white-mute);
+  --color-text:            var(--theme-c-indigo);
+  --color-debug-border:    var(--theme-c-red);
+
+  --color-power:           var(--theme-c-blue);
+}
+
+@media (prefers-color-scheme: dark)
+{
+  :root
+  {
+    --color-background:      var(--theme-c-black-soft);
+    --color-background-soft: var(--theme-c-black);
+    --color-background-mute: var(--theme-c-black-mute);
+    --color-text:            var(--theme-c-white-dark);
+    --color-debug-border:    var(--theme-c-red-dark);
+  }
+}
+
