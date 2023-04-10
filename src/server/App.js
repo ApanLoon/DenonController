@@ -1,47 +1,16 @@
 
-import { DenonOptions, DenonDevice, DenonEvent, DenonInput } from "./Denon.js";
-import { MpdOptions, MpdClient, MpdEvent, PlayerState } from "./MpdClient.js";
+import { DenonDevice, DenonEvent, DenonInput } from "./Denon.js";
+import { MpdClient, MpdEvent, PlayerState } from "./MpdClient.js";
 import { MiniacApi, MiniacEvent } from "./MiniacApi.js";
+import { readFileSync } from "fs";
 
 console.log ("App: Starting up...");
 
-const config =
-{
-    amp_Host: "192.168.0.52",
-    amp_Port: 23,
-    amp_InputNames:
-    [
-        {denon: DenonInput.Phono      , miniac: "PHONO"     },
-        {denon: DenonInput.Cd         , miniac: "CD"        },
-        {denon: DenonInput.Dvd        , miniac: "DVD"       },
-        {denon: DenonInput.Bluray     , miniac: "BLURAY"    },
-        {denon: DenonInput.Tv         , miniac: "TV"        },
-        {denon: DenonInput.SatCbl     , miniac: "SAT/CBL"   },
-        {denon: DenonInput.MediaPlayer, miniac: "SHIELD"    },
-        {denon: DenonInput.Game       , miniac: "MINIAC"    },
-        {denon: DenonInput.Tuner      , miniac: "TUNER"     },
-        {denon: DenonInput.HdRadio    , miniac: "HDRADIO"   },
-        {denon: DenonInput.IRadio     , miniac: "IRADIO"    },
-        {denon: DenonInput.Server     , miniac: "SERVER"    },
-        {denon: DenonInput.Favorites  , miniac: "FAVORITES" },
-        {denon: DenonInput.Aux1       , miniac: "AUX1"      },
-        {denon: DenonInput.Aux2       , miniac: "AUX2"      },
-        {denon: DenonInput.Aux3       , miniac: "AUX3"      },
-        {denon: DenonInput.Aux4       , miniac: "AUX4"      },
-        {denon: DenonInput.Aux5       , miniac: "AUX5"      },
-        {denon: DenonInput.Aux6       , miniac: "AUX6"      },
-        {denon: DenonInput.Aux7       , miniac: "AUX7"      },
-        {denon: DenonInput.Net        , miniac: "NET"       },
-        {denon: DenonInput.Bluetooth  , miniac: "BLUETOOTH" }
-    ],
+const config = JSON.parse(readFileSync("config.json"));
 
-    player_Host: "miniac.local",
-    player_Port: 6600
-}
-
-const miniacApi = new MiniacApi();
-const amp    = new DenonDevice({ host: config.amp_Host,    port: config.amp_Port });
-const player = new MpdClient  ({ host: config.player_Host, port: config.player_Port });
+const miniacApi = new MiniacApi   ({                           port: config.miniac_Port });
+const amp       = new DenonDevice ({ host: config.amp_Host,    port: config.amp_Port    });
+const player    = new MpdClient   ({ host: config.player_Host, port: config.player_Port });
 
 amp.on(DenonEvent.PowerState,    isOn  => miniacApi.amp_SendPowerState(isOn));
 amp.on(DenonEvent.SelectedInput, input => miniacApi.amp_SendSelectedInput(amp_InputNameFromDenon (input)));

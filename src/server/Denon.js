@@ -5,6 +5,11 @@ export class DenonOptions
 {
     host;
     port = 23;
+
+    constructor(init)
+    {
+        Object.assign(this, init);
+    }
 }
 
 export class DenonEvent
@@ -42,11 +47,10 @@ export class DenonInput
 
 export class DenonDevice extends EventEmitter
 {
-
     constructor(options)
     {
         super();
-        this.options = options;
+        this.options = new DenonOptions(options);
         this.socket = new Socket();
     }
 
