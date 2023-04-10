@@ -2,6 +2,7 @@
 import { DenonOptions, DenonDevice, DenonEvent, DenonInput } from "./Denon.js";
 import { MpdOptions, MpdClient, MpdEvent, PlayerState } from "./MpdClient.js";
 import { MiniacApi, MiniacEvent } from "./MiniacApi.js";
+import Express from "express";
 
 console.log ("App: Starting up...");
 
@@ -39,9 +40,11 @@ const config =
     player_Port: 6600
 }
 
-const miniacApi = new MiniacApi();
-const amp    = new DenonDevice({ host: config.amp_Host,    port: config.amp_Port });
-const player = new MpdClient  ({ host: config.player_Host, port: config.player_Port });
+const server = Express();
+
+const miniacApi = new MiniacApi   (server);
+const amp       = new DenonDevice ({ host: config.amp_Host,    port: config.amp_Port });
+const player    = new MpdClient   ({ host: config.player_Host, port: config.player_Port });
 
 amp.on(DenonEvent.PowerState,    isOn  => miniacApi.amp_SendPowerState(isOn));
 amp.on(DenonEvent.SelectedInput, input => miniacApi.amp_SendSelectedInput(amp_InputNameFromDenon (input)));
@@ -82,6 +85,9 @@ player.connect()
     console.log ("Player error: ", error);
 });
 
+// Set up static hosting of the client.
+server.use(Express.static("../client/miniac-frontend/dist/"));
+server.listen(4000);
 
 /// Conversion functions:
 ///
