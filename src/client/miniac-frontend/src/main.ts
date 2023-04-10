@@ -5,11 +5,28 @@ import './assets/main.css'
 import miniacPlugin from './plugins/Miniac/MiniacPlugin';
 import { MiniacOptions } from './plugins/Miniac/MiniacOptions';
 
-const app = createApp(App);
-app.use(miniacPlugin, new MiniacOptions(
+console.log("main.ts: Getting config...");
+fetch("config.json")
+.then(response =>
+{
+    if (!response.ok)
     {
-        host: "localhost",
-        port: 4000
-    }));
+        throw new Error(`${response.status} ${response.statusText}`);
+    }
 
-app.mount('#app');
+    response.json()
+    .then(config =>
+    {
+        const app = createApp(App);
+        app.use(miniacPlugin, new MiniacOptions(config));
+        app.mount('#app');
+    })
+    .catch(error =>
+    {
+        console.log ("main.ts: Unable to get config. ", error);
+    });
+})
+.catch(error=>
+{
+    console.log ("main.ts: Unable to get config. ", error);
+});

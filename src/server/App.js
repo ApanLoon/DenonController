@@ -3,14 +3,16 @@ import { DenonDevice, DenonEvent, DenonInput } from "./Denon.js";
 import { MpdClient, MpdEvent, PlayerState } from "./MpdClient.js";
 import { MiniacApi, MiniacEvent } from "./MiniacApi.js";
 import { readFileSync } from "fs";
+import Express from "express";
 
 console.log ("App: Starting up...");
 
 const config = JSON.parse(readFileSync("config.json"));
 
-const miniacApi = new MiniacApi   ({                           port: config.miniac_Port });
-const amp       = new DenonDevice ({ host: config.amp_Host,    port: config.amp_Port    });
-const player    = new MpdClient   ({ host: config.player_Host, port: config.player_Port });
+const server    = Express();
+const miniacApi = new MiniacApi   ({                           port: config.miniac_ApiPort });
+const amp       = new DenonDevice ({ host: config.amp_Host,    port: config.amp_Port       });
+const player    = new MpdClient   ({ host: config.player_Host, port: config.player_Port    });
 
 amp.on(DenonEvent.PowerState,    isOn  => miniacApi.amp_SendPowerState(isOn));
 amp.on(DenonEvent.SelectedInput, input => miniacApi.amp_SendSelectedInput(amp_InputNameFromDenon (input)));
@@ -34,23 +36,26 @@ miniacApi.on(MiniacEvent.Player_Prev,               ()      => player.prev());
 amp.connect()
 .then (() =>
 {
-    console.log("Amp success");
+    console.log("App: Amp success");
 })
 .catch (error =>
 {
-    console.log ("Amp error: ", error);
+    console.log ("App: Amp error: ", error);
 });
 
 player.connect()
 .then (() =>
 {
-    console.log("Player success");
+    console.log("App: Player success");
 })
 .catch (error =>
 {
-    console.log ("Player error: ", error);
+    console.log ("App: Player error: ", error);
 });
 
+server.use(Express.static(config.miniac_FrontendPath));
+server.listen(config.miniac_FrontendPort);
+console.log("App: Providing client on port", config.miniac_FrontendPort);
 
 /// Conversion functions:
 ///

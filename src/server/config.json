@@ -1,6 +1,8 @@
 {
-    "miniac_Port": 4000,
-    
+    "miniac_FrontendPort": 80,
+    "miniac_FrontendPath": "../client/miniac-frontend/dist/",
+    "miniac_ApiPort": 4000,
+
     "amp_Host": "192.168.0.52",
     "amp_Port": 23,
     "amp_InputNames":
