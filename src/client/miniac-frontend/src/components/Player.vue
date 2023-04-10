@@ -73,15 +73,16 @@ if (miniac === undefined)
 
 button
 {
+    display: inline-block;
     background-color: black;
+    color: #333;
     border: 2px solid var(--color-text);
     border-radius: 50%;
-    color: #333;
     width: 4rem;
     height: 4rem;
+
     text-align: center;
     text-decoration: none;
-    display: inline-block;
     margin-right: 0.5rem;
 }
 

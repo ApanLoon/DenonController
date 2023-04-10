@@ -2,6 +2,7 @@
 import { inject, computed } from "vue";
 import type {IMiniac} from "../plugins/Miniac/IMiniac";
 import IconPower from "./icons/IconPower.vue";
+import IconNotes from "./icons/IconNotes.vue";
 
 const miniac = inject<IMiniac>("miniac");
 if (miniac === undefined)
@@ -17,13 +18,19 @@ const amp_SelectedInput = computed(() =>
 
 <template>
   <div class="amplifier">
-    <button class="power-button"
-            :class="{'power-on': miniac.amp_IsOn.value}"
-            style="grid-area: power-button;"
-            @click="miniac.amp_RequestPowerToggle()"><IconPower /></button>
+    <button :class="{'power-on': miniac.amp_IsOn.value}"
+            style="grid-area: power;"
+            @click="miniac.amp_RequestPowerToggle()">
+      <IconPower />
+    </button>
     <div style="grid-area: input;">{{ amp_SelectedInput }}</div>
     <div style="grid-area: x;"></div>
     <div style="grid-area: y;"></div>
+    <button :class="{'power-on': amp_SelectedInput === 'MINIAC'}"
+            style="grid-area: selector;"
+            @click="miniac.amp_SetSelectedInput('MINIAC')">
+      <IconNotes />
+    </button>
   </div>
 </template>
 
@@ -32,24 +39,26 @@ const amp_SelectedInput = computed(() =>
 {
   font-size: 0.6rem;
   display: grid;
-  grid-template-columns: 4.5rem auto;
+  grid-template-columns: 4.5rem auto 4rem;
   grid-template-areas: 
-    "power-button input"
-    "power-button x"
-    "power-button y"
+    "power input selector"
+    "power x     selector"
+    "power y     selector"
   ;
 }
 
-.power-button
+button
 {
     display: inline-block;
     background-color: black;
+    color: #333;
     border: 2px solid var(--color-text);
     border-radius: 50%;
-    color: #333;
     width: 4rem;
     height: 4rem;
-    margin-right: 0.5rem;
+
+    text-align: center;
+    text-decoration: none;
 }
 
 .power-on svg
