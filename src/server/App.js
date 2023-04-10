@@ -100,7 +100,9 @@ function playerStatusFromMpd(mpdStatus)
 {
     const status = 
     {
-        isPlaying: mpdStatus.state === PlayerState.play
+        isPlaying: mpdStatus.state === PlayerState.play,
+        duration:  mpdStatus.duration,
+        elapsed:   mpdStatus.elapsed
     };
     return status;
     
