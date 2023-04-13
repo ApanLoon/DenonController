@@ -13,22 +13,20 @@ export class MiniacOptions
     }
 }
 
-export class MiniacEvent
+export const MiniacEvent = Object.freeze(
 {
-    static get Amp_RequestPowerState()     { return "amp:powerstate";       }
-    static get Amp_SetPowerState()         { return "amp:setpowerstate";    }
-
-    static get Amp_RequestSelectedInput()  { return "amp:selectedinput";    }
-    static get Amp_SetSelectedInput()      { return "amp:setselectedinput"; }
-
-    static get Player_RequestStatus()      { return "player:status";        }
-    static get Player_RequestCurrentSong() { return "player:currentsong";   }
-    static get Player_Play()               { return "player:play";          }
-    static get Player_Pause()              { return "player:pause";         }
-    static get Player_Stop()               { return "player:stop";          }
-    static get Player_Next()               { return "player:next";          }
-    static get Player_Prev()               { return "player:prev";          }
-}
+    Amp_RequestPowerState:     "amp:powerstate",      
+    Amp_SetPowerState:         "amp:setpowerstate",   
+    Amp_RequestSelectedInput:  "amp:selectedinput",   
+    Amp_SetSelectedInput:      "amp:setselectedinput",
+    Player_RequestStatus:      "player:status",       
+    Player_RequestCurrentSong: "player:currentsong",  
+    Player_Play:               "player:play",         
+    Player_Pause:              "player:pause",        
+    Player_Stop:               "player:stop",         
+    Player_Next:               "player:next",         
+    Player_Prev:               "player:prev"         
+});
 
 class Connection
 {
