@@ -1,6 +1,7 @@
 
 import { DenonDevice, DenonEvent, DenonInput } from "./Denon.js";
-import { MpdClient, MpdEvent, PlayerState } from "./MpdClient.js";
+import { MpdClient, MpdEvent } from "./MpdClient/MpdClient.js";
+import { PlayerState } from "./MpdClient/Status.js";
 import { MiniacApi, MiniacEvent } from "./MiniacApi.js";
 import { readFileSync } from "fs";
 import Express from "express";
