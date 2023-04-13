@@ -15,7 +15,7 @@ miniac.connect(() =>
   miniac.amp_RequestPowerState();
   miniac.amp_RequestSelectedInput();
   miniac.player_RequestStatus();
-  setTimeout(()=>miniac.player_RequestCurrentSong(), 500); // TODO: Not waiting appears to make the MpdClient confuzzled?
+  miniac.player_RequestCurrentSong()
 });
 
 </script>

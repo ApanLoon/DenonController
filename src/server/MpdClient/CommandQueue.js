@@ -19,25 +19,21 @@ export class CommandQueue
         this.queue = [];
     }
 
+    get isEmpty() { return this.queue.length == 0 };
+
     get first()
     {
-        if (this.queue.length == 0)
+        if (this.isEmpty)
         {
             return undefined;
         }
         return this.queue[0];
     }
 
-    enqueue (cmd, socket, onResponse)
+    enqueue (cmd, onResponse)
     {
-        // if (socket === undefined || socket === null || socket.closed === true)
-        // {
-        //     return undefined;
-        // }
-
         let command = new Command(cmd, onResponse);
         this.queue.push(command);
-        //socket.write(command.cmd + "\n");
         return command;
     }
 

@@ -1,3 +1,6 @@
+# Deploy
+deploy/
+
 # Logs
 logs
 *.log
