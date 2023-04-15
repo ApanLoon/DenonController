@@ -57,12 +57,12 @@ function zeroPadding(num : number, digits : number) : string
     border-top: 1px solid currentColor;
     border-bottom: 1px solid currentColor;
     font-size: 7rem;
-    line-height: 5.5rem;
+    line-height: 6rem; /* NOTE: This is font-dependent */
 }
 .clock span
 {
     position: relative;
-    bottom: 0.4rem;
+    bottom: 0rem; /* NOTE: This is font-dependent */
 }
 
 .date
