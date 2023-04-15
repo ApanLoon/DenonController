@@ -19,8 +19,8 @@ onMounted(() =>
     miniac.player_RequestPlaylist();
 });
 
-watch(() => miniac.player_Status.index, index => scrollToSong(index));
-watch(() => miniac.player_Playlist, list => scrollToSong(miniac.player_Status.index, false), { deep: true });
+watch(() => miniac.player_Status.index, index => scrollToSong(index), { flush: "post"});
+watch(() => miniac.player_Playlist, list => scrollToSong(miniac.player_Status.index, false), { deep: true, flush: "post" });
 
 function scrollToSong(index : number, smooth : boolean = true)
 {
