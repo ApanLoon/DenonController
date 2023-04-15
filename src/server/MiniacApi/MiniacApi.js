@@ -25,7 +25,8 @@ export const MiniacEvent = Object.freeze(
     Player_Pause:              "player:pause",        
     Player_Stop:               "player:stop",         
     Player_Next:               "player:next",         
-    Player_Prev:               "player:prev"         
+    Player_Prev:               "player:prev",
+    Player_RequestPlaylist:    "player:playlist"
 });
 
 export class MiniacApi extends EventEmitter
@@ -59,6 +60,7 @@ export class MiniacApi extends EventEmitter
                     case "Player:Stop":               this.emit(MiniacEvent.Player_Stop);                     break;
                     case "Player:Next":               this.emit(MiniacEvent.Player_Next);                     break;
                     case "Player:Prev":               this.emit(MiniacEvent.Player_Prev);                     break;
+                    case "Player:RequestPlaylist":    this.emit(MiniacEvent.Player_RequestPlaylist);                     break;
                 }
             },
             (event, connection) =>
@@ -117,4 +119,13 @@ export class MiniacApi extends EventEmitter
             song: song
         }));
     }
-}
+
+    player_SendPlaylist (list)
+    {
+        //console.log("MiniacApi.player_SendPlaylist: ", list);
+        this.connections.sendToAll(JSON.stringify(
+        {
+            type: "Player:Playlist",
+            list: list
+        }));
+    }}

@@ -18,7 +18,8 @@ export class MpdOptions
 export const MpdEvent = Object.freeze(
 {
     Status:      "status",
-    CurrentSong: "currentsong"
+    CurrentSong: "currentsong",
+    PlaylistInfo: "playlistinfo"
 });
 
 
@@ -26,13 +27,15 @@ export class MpdClient extends EventEmitter
 {
     get isConnected() { return this.socket !== undefined && this.socket !== null && this.socket.closed === false };
 
-    commandQueue = new CommandQueue();
-    get isIdle() { return this.commandQueue.first.cmd === "idle" };
+    _commandQueue = new CommandQueue();
+    get _isIdle() { return this._commandQueue.first.cmd === "idle" };
 
-    currentStatus = new Status();
-    get isPlaying() { return this.currentStatus.state === PlayerState.play };
+    _currentStatus = new Status();
+    get _isPlaying() { return this._currentStatus.state === PlayerState.play };
 
-    currentSong = new Tags();
+    _currentSong = new Tags();
+
+    _data = "";
 
     constructor(options)
     {
@@ -49,6 +52,7 @@ export class MpdClient extends EventEmitter
             this.socket.once('connect', () =>
             {
                 console.log (`MpdClient: Socket connected to ${this.options.host}:${this.options.port}`);
+                this.data = "";
                 resolve();
             });
 
@@ -72,12 +76,14 @@ export class MpdClient extends EventEmitter
                 }
                 else if (msg.endsWith("OK"))
                 {
-                    let command = this.commandQueue.dequeueFirst();
+                    this._data += msg;
+
+                    let command = this._commandQueue.dequeueFirst();
                     if (command !== undefined)
                     {
-                        command.respond(msg);
+                        command.respond(this._data);
                     }
-                    this.SendNextCommand();
+                    this.sendNextCommand();
                 }
                 else if (msg.startsWith("binary: "))
                 {
@@ -86,7 +92,7 @@ export class MpdClient extends EventEmitter
                 }
                 else if (msg.startsWith("ACK "))
                 {
-                    let command = this.commandQueue.dequeueFirst();
+                    let command = this._commandQueue.dequeueFirst();
 
                     const re = new RegExp("^ACK \\[(\\d+)@(\\d+)\\]\\s+\\{(.*)}\\s+(.*)$");
                     const r = msg.match(re);
@@ -103,11 +109,12 @@ export class MpdClient extends EventEmitter
                         console.log ("Error: ", msg);
                     }
 
-                    this.SendNextCommand();
+                    this.sendNextCommand();
                 }
                 else
                 {
-                    console.log ("MpdClient: Unparsed message. ", msg);
+                    // Probably truncated by MTU
+                    this._data += msg;
                 }
             });
 
@@ -130,7 +137,7 @@ export class MpdClient extends EventEmitter
     }
 
 
-    SendNextCommand()
+    sendNextCommand()
     {
         if (this.isConnected === false)
         {
@@ -138,13 +145,14 @@ export class MpdClient extends EventEmitter
         }
 
         //console.log("SendNextCommand");
-        if (this.commandQueue.isEmpty)
+        this._data = "";
+        if (this._commandQueue.isEmpty)
         {
             this.idle();
         }
         else
         {
-            let command = this.commandQueue.first;
+            let command = this._commandQueue.first;
             this.socket.write(`${command.cmd}\n`);
         }
     }
@@ -152,13 +160,13 @@ export class MpdClient extends EventEmitter
 
     idle()
     {
-        if (this.commandQueue.isEmpty === false || this.isConnected === false)
+        if (this._commandQueue.isEmpty === false || this.isConnected === false)
         {
             return;
         }
 
         //console.log("MpdClient.idle");
-        let command = this.commandQueue.enqueue("idle", data =>
+        let command = this._commandQueue.enqueue("idle", data =>
         {
             data.split("\n").forEach(line =>
             {
@@ -169,8 +177,8 @@ export class MpdClient extends EventEmitter
                     switch (subsystem)
                     {
                         case "player":
-                            this.requestStatus();
-                            this.requestCurrentSong();
+                            this.status();
+                            this._currentSong();
                             break;
                     }
                 }
@@ -181,7 +189,7 @@ export class MpdClient extends EventEmitter
 
     noidle()
     {
-        if (this.isIdle === false || this.isConnected === false)
+        if (this._isIdle === false || this.isConnected === false)
         {
             return;
         }
@@ -189,85 +197,107 @@ export class MpdClient extends EventEmitter
         this.socket.write("noidle\n");
     }
 
-    requestStatus()
+    status()
     {
         console.log("MpdClient.requestStatus");
-        let command = this.commandQueue.enqueue("status", data =>
+        let command = this._commandQueue.enqueue("status", data =>
         {
             console.log("MpdClient.requestStatus OK");
-            this.currentStatus = Status.parse(data);
-            this.emit(MpdEvent.Status, this.currentStatus);
+            this._currentStatus = Status.parse(data);
+            this.emit(MpdEvent.Status, this._currentStatus);
         });
 
-        if (this.isIdle) this.noidle();
+        if (this._isIdle) this.noidle();
     }
 
-    requestCurrentSong()
+    currentSong()
     {
         console.log("MpdClient.requestCurrentSong");
-        let command = this.commandQueue.enqueue("currentsong", data =>
+        let command = this._commandQueue.enqueue("currentsong", data =>
         {
             console.log("MpdClient.requestCurrentSong OK");
-            this.currentSong = Tags.parse(data);
-            this.emit(MpdEvent.CurrentSong, this.currentSong);
+            this._currentSong = Tags.parse(data);
+            this.emit(MpdEvent.CurrentSong, this._currentSong);
         });
 
-        if (this.isIdle) this.noidle();
+        if (this._isIdle) this.noidle();
     }
 
     play(index)
     {
         console.log("MpdClient.play");
-        let command = this.commandQueue.enqueue(`play ${index}`, data =>
+        let command = this._commandQueue.enqueue(`play ${index}`, data =>
         {
             console.log ("MpdClient.play ", data);
         });
 
-        if (this.isIdle) this.noidle();
+        if (this._isIdle) this.noidle();
     }
 
     pause(isOn)
     {
         console.log("MpdClient.pause");
-        let cmd = this.isPlaying ? `pause ${isOn ? 1 : 0}` : "play";
-        let command = this.commandQueue.enqueue(cmd, data =>
+        let cmd = this._isPlaying ? `pause ${isOn ? 1 : 0}` : "play";
+        let command = this._commandQueue.enqueue(cmd, data =>
         {
             console.log (`MpdClient.pause ${isOn}`, data);
         });
 
-        if (this.isIdle) this.noidle();
+        if (this._isIdle) this.noidle();
     }
 
     stop()
     {
         console.log("MpdClient.stop");
-        let command = this.commandQueue.enqueue("stop", data =>
+        let command = this._commandQueue.enqueue("stop", data =>
         {
             console.log ("MpdClient.stop ", data);
         });
 
-        if (this.isIdle) this.noidle();
+        if (this._isIdle) this.noidle();
     }
 
     prev()
     {
         console.log("MpdClient.prev");
-        let command = this.commandQueue.enqueue("previous", data =>
+        let command = this._commandQueue.enqueue("previous", data =>
         {
             console.log ("MpdClient.prev ", data);
         });
 
-        if (this.isIdle) this.noidle();
+        if (this._isIdle) this.noidle();
     }
 
     next()
     {
         console.log("MpdClient.next");
-        let command = this.commandQueue.enqueue("next", data =>
+        let command = this._commandQueue.enqueue("next", data =>
         {
             console.log ("MpdClient.next", data);
         });
 
-        if (this.isIdle) this.noidle();
+        if (this._isIdle) this.noidle();
+    }
+
+    playlistinfo(start, end)
+    {
+        console.log("MpdClient.playlistinfo");
+        let args = "";
+        if (start)
+        {
+            args += start;
+        }
+        if (end)
+        {
+            args += ":" + end;
+        }
+        let command = this._commandQueue.enqueue(`playlistinfo ${args}`, data =>
+        {
+            console.log ("MpdClient.playlistinfo OK");
+            const l = data.split(/^|\nfile\:/).map(x=>Tags.parse(x));
+            this.emit(MpdEvent.PlaylistInfo, l);
+        });
+
+        if (this._isIdle) this.noidle();
     }
 }
