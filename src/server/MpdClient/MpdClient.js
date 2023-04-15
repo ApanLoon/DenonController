@@ -178,7 +178,7 @@ export class MpdClient extends EventEmitter
                     {
                         case "player":
                             this.status();
-                            this._currentSong();
+                            this.currentSong();
                             break;
                     }
                 }
