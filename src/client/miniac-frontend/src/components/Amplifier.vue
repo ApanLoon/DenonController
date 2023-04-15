@@ -39,12 +39,13 @@ const amp_SelectedInput = computed(() =>
 {
   font-size: 0.6rem;
   display: grid;
-  grid-template-columns: 4.5rem auto 4rem;
+  grid-template-columns: 4rem 4rem auto;
   grid-template-areas: 
-    "power input selector"
-    "power x     selector"
-    "power y     selector"
+    "power selector input"
+    "power selector x    "
+    "power selector y    "
   ;
+  gap: 0.5rem;
 }
 
 .power-on svg

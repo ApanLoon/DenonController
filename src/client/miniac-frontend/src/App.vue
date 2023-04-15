@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { inject } from "vue";
+import { inject, provide, ref } from "vue";
 import type {IMiniac} from "./plugins/Miniac/IMiniac";
-import Amplifier from "./components/Amplifier.vue";
-import Clock from "./components/Clock.vue";
-import Player from "./components/Player.vue";
+import MainPage from "./components/MainPage.vue";
+import PlaylistPage from "./components/PlaylistPage.vue";
+import LibraryPage from "./components/LibraryPage.vue";
+
+const currentPage = ref("main");
+provide("current-page", currentPage);
 
 const miniac = inject<IMiniac>("miniac");
 if (miniac === undefined)
@@ -18,26 +21,22 @@ miniac.connect(() =>
   miniac.player_RequestCurrentSong()
 });
 
+function selectPage(page : string) :void
+{
+  currentPage.value = page;
+}
+
+function closePage() : void
+{
+  currentPage.value = "main";
+}
 </script>
 
 <template>
   <main>
-    <Amplifier style="grid-area: amplifier;" />
-    <Clock style="grid-area: clock;" />
-    <Player style="grid-area: player;" />
+    <MainPage     v-if="currentPage === 'main'"     @menu-select="page => selectPage(page)"></MainPage>
+    <PlaylistPage v-if="currentPage === 'playlist'" @close="closePage()"></PlaylistPage>
+    <LibraryPage  v-if="currentPage === 'library'"  @close="closePage()"></LibraryPage>
   </main>
 </template>
 
-<style scoped>
-main
-{
-  display: grid;
-  grid-template-areas: "amplifier" "clock" "player";
-  gap: 1em;
-}
-
-main > *
-{
-  border: 1px solid var(--color-debug-border);
-}
-</style>
