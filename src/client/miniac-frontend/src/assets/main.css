@@ -66,3 +66,35 @@ button
     text-align: center;
     text-decoration: none;
 }
+
+/* Scroll bars
+ *
+ */
+
+::-webkit-scrollbar
+{
+  width: 0.6rem; /* Mostly for vertical scrollbars */
+  height: 0.6rem; /* Mostly for horizontal scrollbars */
+}
+
+::-webkit-scrollbar-thumb  /* Foreground */
+{
+  border-radius: 0 1rem 1rem 0;
+  background: #999;
+}
+
+::-webkit-scrollbar-track  /* Background */
+{
+  border-radius: 0 1rem 1rem 0;
+  background: #333;
+}
+
+::-webkit-scrollbar-thumb:horizontal  /* Foreground */
+{
+  border-radius: 0 0 1rem 1rem;
+}
+
+::-webkit-scrollbar-track:horizontal  /* Background */
+{
+  border-radius: 0 0 1rem 1rem;
+}

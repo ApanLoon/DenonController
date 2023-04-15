@@ -78,7 +78,7 @@ local-pagetitle
 
 local-song-container
 {
-    overflow: scroll;
+    overflow-y: scroll;
     min-height: 0;
 }
 
