@@ -25,6 +25,8 @@ export interface IMiniac
     // Player:
     player_Status        : PlayerStatus;
     player_CurrentSong   : Song;
+    player_Playlist      : Array<Song>;
+
 
     player_RequestStatus()      : void;
     player_RequestCurrentSong() : void;
@@ -34,4 +36,5 @@ export interface IMiniac
     player_RequestPlayToggle()  : void;
     player_RequestPrev()        : void;
     player_RequestNext()        : void;
+    player_RequestPlaylist()    : void;
 }

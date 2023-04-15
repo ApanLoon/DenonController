@@ -15,27 +15,27 @@ function close()
 </script>
 
 <template>
-    <page>
-        <pagetitle style="grid-area: page-title;">Library</pagetitle>
+    <local-page>
+        <local-pagetitle style="grid-area: page-title;">Library</local-pagetitle>
         <button    style="grid-area: close;" class="close" @click="close()"><IconClose /></button>
-    </page>
+    </local-page>
 </template>
 
 <style scoped>
-page
+local-page
 {
     display: grid;
     grid-template-areas: "page-title close";
     gap: 0.5em;
 }
-/* page > *
+/* local-page > *
 {
   border: 1px solid var(--color-debug-border);
 } */
 
-pagetitle
+local-pagetitle
 {
-    font-size: 3rem;
+    font-size: 2rem;
 }
 
 .close

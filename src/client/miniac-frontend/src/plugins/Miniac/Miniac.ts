@@ -43,6 +43,7 @@ export class Miniac implements IMiniac
 
                 case "Player:Status":      console.log("Miniac: Player status",       msg.status); this.player_Status.copyFrom(msg.status);     break;
                 case "Player:CurrentSong": console.log("Miniac: Player current song", msg.song);   this.player_CurrentSong.copyFrom(msg.song);  break;
+                case "Player:Playlist":    console.log("Miniac: Player playlist",     msg.list);   this.player_Playlist = msg.list;  break;
             }
         });
 
@@ -97,6 +98,7 @@ export class Miniac implements IMiniac
     /// Player:
     public player_Status        = reactive(new PlayerStatus());
     public player_CurrentSong   = reactive(new Song());
+    public player_Playlist      = reactive([]);
 
     public player_RequestStatus()      : void
     {
@@ -145,4 +147,11 @@ export class Miniac implements IMiniac
         console.log("Miniac.player_RequestNext");
         this._socket?.send(JSON.stringify({ type: "Player:Next" }));
     }
+
+    public player_RequestPlaylist() : void
+    {
+        console.log("Miniac.player_RequestPlaylist");
+        this._socket?.send(JSON.stringify({ type: "Player:RequestPlaylist" }));
+    }
+
 }
