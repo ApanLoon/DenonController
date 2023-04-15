@@ -79,7 +79,8 @@ function playerStatusFromMpd(mpdStatus)
     {
         isPlaying: mpdStatus.state === PlayerState.play,
         duration:  mpdStatus.duration,
-        elapsed:   mpdStatus.elapsed
+        elapsed:   mpdStatus.elapsed,
+        index:     mpdStatus.song - 1
     };
     return status;
     

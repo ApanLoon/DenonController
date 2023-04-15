@@ -16,28 +16,38 @@
   --theme-c-red-dark:   #460000;
 
   --theme-c-blue:       #0000ff;
+
+  --theme-c-green:      #00ff00;
+  --theme-c-green-pale: #cae7ca;
+  --theme-c-green-mute: #9ad79a;
 }
 
 /* semantic color variables for this project */
 :root
 {
-  --color-background:      var(--theme-c-white-soft);
-  --color-background-soft: var(--theme-c-white);
-  --color-background-mute: var(--theme-c-white-mute);
-  --color-text:            var(--theme-c-indigo);
-  --color-debug-border:    var(--theme-c-red);
+  --color-background:        var(--theme-c-white-soft);
+  --color-background-soft:   var(--theme-c-white);
+  --color-background-mute:   var(--theme-c-white-mute);
+  --color-text:              var(--theme-c-indigo);
+  --color-text-active:       var(--theme-c-indigo);
+  --color-background-active: var(--theme-c-green-pale);
 
-  --color-power:           var(--theme-c-blue);
+  --color-debug-border:      var(--theme-c-red);
+
+  --color-power:             var(--theme-c-blue);
 }
 
 @media (prefers-color-scheme: dark)
 {
   :root
   {
-    --color-background:      var(--theme-c-black-soft);
-    --color-background-soft: var(--theme-c-black);
-    --color-background-mute: var(--theme-c-black-mute);
-    --color-text:            var(--theme-c-white-dark);
+    --color-background:        var(--theme-c-black-soft);
+    --color-background-soft:   var(--theme-c-black);
+    --color-background-mute:   var(--theme-c-black-mute);
+    --color-text:              var(--theme-c-white-dark);
+    --color-text-active:       var(--theme-c-black-mute);
+    --color-background-active: var(--theme-c-green-mute);
+  
     --color-debug-border:    var(--theme-c-red-dark);
   }
 }

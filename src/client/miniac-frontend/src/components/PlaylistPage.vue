@@ -31,7 +31,9 @@ function close()
         <local-pagetitle      style="grid-area: page-title;">Playlist</local-pagetitle>
         <button               style="grid-area: close;" class="close" @click="close()"><IconClose /></button>
         <local-song-container style="grid-area: list;">
-            <div class="song" v-for="song in miniac.player_Playlist">
+            <div v-for="(song, index) in miniac.player_Playlist"
+                 class="song"
+                 :class="{ active : index === miniac.player_Status.index } ">
                 <div style="grid-area: title;"  class="title" >{{ song.title  }}</div>
                 <div style="grid-area: artist;" class="artist">{{ song.artist }}</div>
                 <div style="grid-area: album;"  class="album" >{{ song.album  }}</div>
@@ -82,9 +84,15 @@ local-song-container
                          "artist album";
     gap: 0.5rem;
 }
+
 .song:nth-child(odd)
 {
     background-color: var(--color-background-mute);
+}
+.active
+{
+    color: var(--color-text-active) !important;
+    background-color: var(--color-background-active) !important;
 }
 
 .title
