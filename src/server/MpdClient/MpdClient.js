@@ -17,8 +17,8 @@ export class MpdOptions
 
 export const MpdEvent = Object.freeze(
 {
-    Status:      "status",
-    CurrentSong: "currentsong",
+    Status:       "status",
+    CurrentSong:  "currentsong",
     PlaylistInfo: "playlistinfo"
 });
 
@@ -180,7 +180,11 @@ export class MpdClient extends EventEmitter
                             this.status();
                             this.currentSong();
                             break;
-                    }
+
+                        case "playlist":
+                            this.playlistinfo();
+                            break;
+                        }
                 }
             });
         });
