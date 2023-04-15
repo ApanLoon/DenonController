@@ -18,21 +18,23 @@ const player    = new MpdClient   ({ host: config.player_Host, port: config.play
 amp.on(DenonEvent.PowerState,    isOn  => miniacApi.amp_SendPowerState(isOn));
 amp.on(DenonEvent.SelectedInput, input => miniacApi.amp_SendSelectedInput(amp_InputNameFromDenon (input)));
 
-player.on(MpdEvent.Status,      status => miniacApi.player_SendStatus      (playerStatusFromMpd(status)));
-player.on(MpdEvent.CurrentSong, song   => miniacApi.player_SendCurrentSong (playerSongFromMpd(song)));
+player.on(MpdEvent.Status,       status => miniacApi.player_SendStatus      (playerStatusFromMpd(status)));
+player.on(MpdEvent.CurrentSong,  song   => miniacApi.player_SendCurrentSong (playerSongFromMpd(song)));
+player.on(MpdEvent.PlaylistInfo, list   => miniacApi.player_SendPlaylist    (playerPlaylistFromMpd(list)));
 
 miniacApi.on(MiniacEvent.Amp_RequestPowerState,     ()      => amp.requestPowerState());
 miniacApi.on(MiniacEvent.Amp_SetPowerState,         (isOn)  => amp.setPowerState(isOn));
 miniacApi.on(MiniacEvent.Amp_RequestSelectedInput,  ()      => amp.requestSelectedInput());
 miniacApi.on(MiniacEvent.Amp_SetSelectedInput,      (input) => amp.setSelectedInput(amp_InputNameFromMiniac (input)));
 
-miniacApi.on(MiniacEvent.Player_RequestStatus,      ()      => player.requestStatus());
-miniacApi.on(MiniacEvent.Player_RequestCurrentSong, ()      => player.requestCurrentSong());
+miniacApi.on(MiniacEvent.Player_RequestStatus,      ()      => player.status());
+miniacApi.on(MiniacEvent.Player_RequestCurrentSong, ()      => player.currentSong());
 miniacApi.on(MiniacEvent.Player_Play,               ()      => player.pause(false));
 miniacApi.on(MiniacEvent.Player_Pause,              ()      => player.pause(true));
 miniacApi.on(MiniacEvent.Player_Stop,               ()      => player.stop());
 miniacApi.on(MiniacEvent.Player_Next,               ()      => player.next());
 miniacApi.on(MiniacEvent.Player_Prev,               ()      => player.prev());
+miniacApi.on(MiniacEvent.Player_RequestPlaylist,    ()      => player.playlistinfo());
 
 amp.connect()
 .then (() =>
@@ -92,4 +94,9 @@ function playerSongFromMpd(mpdSong)
         title:  mpdSong.title[0]
     };
     return song;
+}
+
+function playerPlaylistFromMpd(mpdList)
+{
+    return mpdList.map(x=>playerSongFromMpd(x));
 }
