@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import type { IMiniac } from "@/plugins/Miniac/IMiniac";
 import IconClose from "./icons/IconClose.vue";
-import { ref, onMounted, inject } from "vue";
+import { ref, onMounted, inject, watch } from "vue";
 
 const miniac = inject<IMiniac>("miniac");
 if (miniac === undefined)
@@ -18,6 +18,16 @@ onMounted(() =>
 {
     miniac.player_RequestPlaylist();
 });
+
+watch(() => miniac.player_Status.index, index => scrollToSong(index));
+watch(() => miniac.player_Playlist, list => scrollToSong(miniac.player_Status.index, false), { deep: true });
+
+function scrollToSong(index : number, smooth : boolean = true)
+{
+    const container = document.getElementsByTagName("local-song-container")[0];
+    const song = container.children.item(index);
+    song?.scrollIntoView({ behavior: smooth ? "smooth" : "auto" });
+}
 
 function close()
 {
