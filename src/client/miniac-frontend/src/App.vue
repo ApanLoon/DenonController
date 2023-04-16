@@ -25,18 +25,13 @@ function selectPage(page : string) :void
 {
   currentPage.value = page;
 }
-
-function closePage() : void
-{
-  currentPage.value = "main";
-}
 </script>
 
 <template>
   <main>
     <MainPage     v-if="currentPage === 'main'"     @menu-select="page => selectPage(page)"></MainPage>
-    <PlaylistPage v-if="currentPage === 'playlist'" @close="closePage()"></PlaylistPage>
-    <LibraryPage  v-if="currentPage === 'library'"  @close="closePage()"></LibraryPage>
+    <PlaylistPage v-if="currentPage === 'playlist'" @menu-select="page => selectPage(page)"></PlaylistPage>
+    <LibraryPage  v-if="currentPage === 'library'"  @menu-select="page => selectPage(page)"></LibraryPage>
   </main>
 </template>
 
