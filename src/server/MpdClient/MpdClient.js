@@ -325,7 +325,7 @@ export class MpdClient extends EventEmitter
     _matchProp(prop, data)
     {
         return data.startsWith(prop)
-        ? data.substring(prop.length)
+        ? data.substring(prop.length).trim()
         : undefined;
     }
 
@@ -360,37 +360,24 @@ export class MpdClient extends EventEmitter
                 }
             });
 
-            // let l = [];
-            // let current = undefined;
-            // data.split("\n").forEach(x =>
-            // {
-            //     if (x.startsWith("AlbumArtist:"))
-            //     {
-            //         if (current)
-            //         {
-            //             l.push(current);
-            //         }
+            // Insert items for artists with no albums:
+            artists.forEach(artist =>
+            {
+                if (l.find(item => item.key === "artist" && item.value === artist) === undefined)
+                {
+                    const newItem = { key: "artist", value: artist };
+                    const index = l.findIndex(x => x.key === "artist" && x.value > artist);
+                    if (index >= 0)
+                    {
+                        l.splice(index, 0, newItem);
+                    }
+                    else
+                    {
+                        l.push(newItem);
+                    }
+                }
+            });
 
-            //         let artist = x.substring(12);
-            //         artist = artist.match(/^\s+$/) ? artist : artist.trim();
-            //         current = { Artist: artist, Albums: [] };
-            //     }
-            //     else if (x.startsWith("Album:"))
-            //     {
-            //         let album = x.substring(6);
-            //         album = album.match(/^\s+$/) ? album : album.trim();
-            //         if (current)
-            //         {
-            //             current.Albums.push(album);
-            //         }
-            //     }
-            // });
-            // if (current)
-            // {
-            //     l.push(current);
-            // }
-
-            //console.log(l);
             this.emit(MpdEvent.Albums, l);
         });
     }
