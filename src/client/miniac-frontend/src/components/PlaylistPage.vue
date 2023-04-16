@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import type { IMiniac } from "@/plugins/Miniac/IMiniac";
 import IconClose from "./icons/IconClose.vue";
-import { ref, onMounted, inject } from "vue";
+import { ref, onMounted, inject, watch } from "vue";
 
 const miniac = inject<IMiniac>("miniac");
 if (miniac === undefined)
@@ -19,6 +19,16 @@ onMounted(() =>
     miniac.player_RequestPlaylist();
 });
 
+watch(() => miniac.player_Status.index, index => scrollToSong(index), { flush: "post"});
+watch(() => miniac.player_Playlist, list => scrollToSong(miniac.player_Status.index, false), { deep: true, flush: "post" });
+
+function scrollToSong(index : number, smooth : boolean = true)
+{
+    const container = document.getElementsByTagName("local-song-container")[0];
+    const song = container.children.item(index);
+    song?.scrollIntoView({ behavior: smooth ? "smooth" : "auto" });
+}
+
 function close()
 {
     emit("close");
@@ -31,7 +41,9 @@ function close()
         <local-pagetitle      style="grid-area: page-title;">Playlist</local-pagetitle>
         <button               style="grid-area: close;" class="close" @click="close()"><IconClose /></button>
         <local-song-container style="grid-area: list;">
-            <div class="song" v-for="song in miniac.player_Playlist">
+            <div v-for="(song, index) in miniac.player_Playlist"
+                 class="song"
+                 :class="{ active : index === miniac.player_Status.index } ">
                 <div style="grid-area: title;"  class="title" >{{ song.title  }}</div>
                 <div style="grid-area: artist;" class="artist">{{ song.artist }}</div>
                 <div style="grid-area: album;"  class="album" >{{ song.album  }}</div>
@@ -66,7 +78,7 @@ local-pagetitle
 
 local-song-container
 {
-    overflow: scroll;
+    overflow-y: scroll;
     min-height: 0;
 }
 
@@ -82,9 +94,15 @@ local-song-container
                          "artist album";
     gap: 0.5rem;
 }
+
 .song:nth-child(odd)
 {
     background-color: var(--color-background-mute);
+}
+.active
+{
+    color: var(--color-text-active) !important;
+    background-color: var(--color-background-active) !important;
 }
 
 .title
