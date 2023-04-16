@@ -42,12 +42,12 @@ function artistSelected()
                 {{ artist }}
             </option>
         </select>
-        <select id="album-selector" multiple>
-            <option v-for="item in miniac.player_Albums"
-                    :class="{header : item.key === 'artist'}">
-                {{ item.value }}
-            </option>
-        </select>
+        <local-album-container>
+            <div v-for="(item, index) in miniac.player_Albums"
+                 :class="{ header : item.key === 'artist' } ">
+                 {{ item.value }}
+            </div>
+        </local-album-container>
     </local-page>
 </template>
 
@@ -62,10 +62,6 @@ local-page
     grid-template-rows: 4rem 2rem 345px; /*TODO: How do I make the third row fill the rest of the vp height and still be scrollable? */
     gap: 0.5em;
 }
-/* local-page > *
-{
-  border: 1px solid var(--color-debug-border);
-} */
 
 local-pagetitle
 {
@@ -83,10 +79,11 @@ select[multiple]
     color: var(--color-text);
     border: none;
     outline: none;
+    font-size: 1.5rem;
 }
 select[multiple] option
 {
-    font-size: 1.5rem;
+    font-weight: normal;
 }
 
 select[multiple] option:nth-child(odd)
@@ -99,5 +96,16 @@ select[multiple] option:nth-child(odd)
     text-align: right;
     color: var(--color-text-active) !important;
     background-color: var(--color-background-active) !important;
+}
+
+local-album-container
+{
+    overflow-y: scroll;
+    min-height: 0;
+    font-size: 1.5rem;
+}
+local-album-container > *:nth-child(odd)
+{
+    background-color: var(--color-background-mute);
 }
 </style>
