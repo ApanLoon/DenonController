@@ -322,22 +322,17 @@ export class MpdClient extends EventEmitter
         });
     }
 
-    _matchProp(prop, data)
-    {
-        return data.startsWith(prop)
-        ? data.substring(prop.length).trim()
-        : undefined;
-    }
-
     albums(artists)
     {
         console.log("MpdClient.albums");
         let filter = "";
         if (artists && artists.length > 0)
         {
+            let escaped = artists.map(x=>this._escapeFilter(x));
+
             // NOTE: There is apparently no OR operator in the mpd expressions.
             //       P OR Q = NOT( NOT(P) AND NOT(Q) )
-            filter = `\"(!( ${artists.map(x=>`(albumartist != '${x}')`).join(" AND ")} ))\"`;
+            filter = `\"(!( ${escaped.map(x=>`(albumartist != '${x}')`).join(" AND ")} ))\"`;
         }
 
         this.list ("album", filter, ["albumartist"], data => 
@@ -390,5 +385,20 @@ export class MpdClient extends EventEmitter
         let command = this._commandQueue.enqueue(`list ${args}`, onResponse);
 
         if (this._isIdle) this.noidle();
+    }
+
+    
+    // Helper functions:
+    //
+    
+    _matchProp(prop, data)
+    {
+        return data.startsWith(prop)
+        ? data.substring(prop.length).trim()
+        : undefined;
+    }
+    _escapeFilter(s)
+    {
+        return s.replace(/([\'\"])/g, (match, char) => `\\\\${char}`);
     }
 }
