@@ -26,6 +26,7 @@ export class Miniac implements IMiniac
         this._socket.addEventListener("open", () => 
         {
             console.log("Miniac: Connected");
+            this.isConnected.value = true;
             if (connectHandler)
             {
                 connectHandler();
@@ -50,6 +51,7 @@ export class Miniac implements IMiniac
         this._socket.onclose = error =>
         {
             console.log("Miniac: Connection closed.", error);
+            this.isConnected.value = false;
             setTimeout(()=>this.connect(connectHandler), 1000);
         }
     }
