@@ -1,7 +1,7 @@
 
 <script setup lang="ts">
 import type { IMiniac } from "@/plugins/Miniac/IMiniac";
-import IconClose from "./icons/IconClose.vue";
+import MainMenu from "./MainMenu.vue";
 import { ref, onMounted, inject, watch } from "vue";
 
 const miniac = inject<IMiniac>("miniac");
@@ -10,7 +10,7 @@ if (miniac === undefined)
   throw new Error ("PlaylistPage.setup: No miniac plugin found.");
 }
 
-const emit = defineEmits<{(e: 'close'): void }>();
+const emit = defineEmits<{(e: 'menu-select', item: string): void }>();
 
 const isOpen = ref(false);
 
@@ -29,17 +29,12 @@ function scrollToSong(index : number, smooth : boolean = true)
     song?.scrollIntoView({ behavior: smooth ? "smooth" : "auto" });
 }
 
-function close()
-{
-    emit("close");
-    isOpen.value = false;
-}
 </script>
 
 <template>
     <local-page>
         <local-pagetitle      style="grid-area: page-title;">Playlist</local-pagetitle>
-        <button               style="grid-area: close;" class="close" @click="close()"><IconClose /></button>
+        <MainMenu @menu-select="selection => emit('menu-select', selection)" />
         <local-song-container style="grid-area: list;">
             <div v-for="(song, index) in miniac.player_Playlist"
                  class="song"
@@ -56,7 +51,7 @@ function close()
 local-page
 {
     display: grid;
-    grid-template-areas: "page-title close"
+    grid-template-areas: "page-title menu"
                          "list list";
     grid-template-rows: 4rem 380px; /*TODO: How do I make the second row fill the rest of the vp height and still be scrollable? */
     gap: 0.5em;
@@ -69,11 +64,6 @@ local-page
 local-pagetitle
 {
     font-size: 2rem;
-}
-
-.close
-{
-    justify-self: right;
 }
 
 local-song-container

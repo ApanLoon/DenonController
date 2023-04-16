@@ -1,23 +1,17 @@
 
 <script setup lang="ts">
-import IconClose from "./icons/IconClose.vue";
+import MainMenu from "./MainMenu.vue";
 import { ref } from "vue";
 
-const emit = defineEmits<{(e: 'close'): void }>();
+const emit = defineEmits<{(e: 'menu-select', item: string): void }>();
 
 const isOpen = ref(false);
-
-function close()
-{
-    emit("close");
-    isOpen.value = false;
-}
 </script>
 
 <template>
     <local-page>
         <local-pagetitle style="grid-area: page-title;">Library</local-pagetitle>
-        <button    style="grid-area: close;" class="close" @click="close()"><IconClose /></button>
+        <MainMenu @menu-select="selection => emit('menu-select', selection)" />
     </local-page>
 </template>
 
@@ -25,7 +19,7 @@ function close()
 local-page
 {
     display: grid;
-    grid-template-areas: "page-title close";
+    grid-template-areas: "page-title menu";
     gap: 0.5em;
 }
 /* local-page > *
@@ -36,10 +30,5 @@ local-page
 local-pagetitle
 {
     font-size: 2rem;
-}
-
-.close
-{
-    justify-self: right;
 }
 </style>
