@@ -26,15 +26,19 @@ export interface IMiniac
     player_Status        : PlayerStatus;
     player_CurrentSong   : Song;
     player_Playlist      : Array<Song>;
+    player_Artists       : Array<string>;
+    player_Albums        : Array<{key : string, value : string }>;
 
 
-    player_RequestStatus()      : void;
-    player_RequestCurrentSong() : void;
-    player_RequestPlay()        : void;
-    player_RequestPause()       : void;
-    player_RequestStop()        : void;
-    player_RequestPlayToggle()  : void;
-    player_RequestPrev()        : void;
-    player_RequestNext()        : void;
-    player_RequestPlaylist()    : void;
+    player_RequestStatus()                        : void;
+    player_RequestCurrentSong()                   : void;
+    player_RequestPlay()                          : void;
+    player_RequestPause()                         : void;
+    player_RequestStop()                          : void;
+    player_RequestPlayToggle()                    : void;
+    player_RequestPrev()                          : void;
+    player_RequestNext()                          : void;
+    player_RequestPlaylist()                      : void;
+    player_RequestArtists()                       : void;
+    player_RequestAlbums(artists : Array<string>) : void;
 }

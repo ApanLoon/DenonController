@@ -26,7 +26,9 @@ export const MiniacEvent = Object.freeze(
     Player_Stop:               "player:stop",         
     Player_Next:               "player:next",         
     Player_Prev:               "player:prev",
-    Player_RequestPlaylist:    "player:playlist"
+    Player_RequestPlaylist:    "player:playlist",
+    Player_RequestArtists:     "player:artists",
+    Player_RequestAlbums:      "player:albums"
 });
 
 export class MiniacApi extends EventEmitter
@@ -47,20 +49,22 @@ export class MiniacApi extends EventEmitter
                 const msg = JSON.parse(data);
                 switch (msg.type)
                 {
-                    case "Amp:RequestPowerState":     this.emit(MiniacEvent.Amp_RequestPowerState);           break;
-                    case "Amp:SetPowerState":         this.emit(MiniacEvent.Amp_SetPowerState, msg.isOn);     break;
+                    case "Amp:RequestPowerState":     this.emit(MiniacEvent.Amp_RequestPowerState);             break;
+                    case "Amp:SetPowerState":         this.emit(MiniacEvent.Amp_SetPowerState, msg.isOn);       break;
     
-                    case "Amp:RequestSelectedInput":  this.emit(MiniacEvent.Amp_RequestSelectedInput);        break;
-                    case "Amp:SetSelectedInput":      this.emit(MiniacEvent.Amp_SetSelectedInput, msg.input); break;
+                    case "Amp:RequestSelectedInput":  this.emit(MiniacEvent.Amp_RequestSelectedInput);          break;
+                    case "Amp:SetSelectedInput":      this.emit(MiniacEvent.Amp_SetSelectedInput, msg.input);   break;
     
-                    case "Player:RequestStatus":      this.emit(MiniacEvent.Player_RequestStatus);            break;
-                    case "Player:RequestCurrentSong": this.emit(MiniacEvent.Player_RequestCurrentSong);       break;
-                    case "Player:Play":               this.emit(MiniacEvent.Player_Play);                     break;
-                    case "Player:Pause":              this.emit(MiniacEvent.Player_Pause);                    break;
-                    case "Player:Stop":               this.emit(MiniacEvent.Player_Stop);                     break;
-                    case "Player:Next":               this.emit(MiniacEvent.Player_Next);                     break;
-                    case "Player:Prev":               this.emit(MiniacEvent.Player_Prev);                     break;
-                    case "Player:RequestPlaylist":    this.emit(MiniacEvent.Player_RequestPlaylist);                     break;
+                    case "Player:RequestStatus":      this.emit(MiniacEvent.Player_RequestStatus);              break;
+                    case "Player:RequestCurrentSong": this.emit(MiniacEvent.Player_RequestCurrentSong);         break;
+                    case "Player:Play":               this.emit(MiniacEvent.Player_Play);                       break;
+                    case "Player:Pause":              this.emit(MiniacEvent.Player_Pause);                      break;
+                    case "Player:Stop":               this.emit(MiniacEvent.Player_Stop);                       break;
+                    case "Player:Next":               this.emit(MiniacEvent.Player_Next);                       break;
+                    case "Player:Prev":               this.emit(MiniacEvent.Player_Prev);                       break;
+                    case "Player:RequestPlaylist":    this.emit(MiniacEvent.Player_RequestPlaylist);            break;
+                    case "Player:RequestArtists":     this.emit(MiniacEvent.Player_RequestArtists);             break;
+                    case "Player:RequestAlbums":      this.emit(MiniacEvent.Player_RequestAlbums, msg.artists); break;
                 }
             },
             (event, connection) =>
@@ -128,4 +132,25 @@ export class MiniacApi extends EventEmitter
             type: "Player:Playlist",
             list: list
         }));
-    }}
+    }
+    
+    player_SendArtists (list)
+    {
+        //console.log("MiniacApi.player_SendArtists: ", list);
+        this.connections.sendToAll(JSON.stringify(
+        {
+            type: "Player:Artists",
+            list: list
+        }));
+    }
+    
+    player_SendAlbums (list)
+    {
+        //console.log("MiniacApi.player_SendAlbums: ", list);
+        this.connections.sendToAll(JSON.stringify(
+        {
+            type: "Player:Albums",
+            list: list
+        }));
+    }
+}

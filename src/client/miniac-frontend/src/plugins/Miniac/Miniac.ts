@@ -45,6 +45,8 @@ export class Miniac implements IMiniac
                 case "Player:Status":      console.log("Miniac: Player status",       msg.status); this.player_Status.copyFrom(msg.status);     break;
                 case "Player:CurrentSong": console.log("Miniac: Player current song", msg.song);   this.player_CurrentSong.copyFrom(msg.song);  break;
                 case "Player:Playlist":    console.log("Miniac: Player playlist",     msg.list);   this.player_Playlist.splice(0, Infinity, ...msg.list);  break;
+                case "Player:Artists":     console.log("Miniac: Player artists",      msg.list);   this.player_Artists.splice (0, Infinity, ...msg.list);  break;
+                case "Player:Albums":      console.log("Miniac: Player albums",       msg.list);   this.player_Albums.splice  (0, Infinity, ...msg.list);  break;
             }
         });
 
@@ -101,6 +103,8 @@ export class Miniac implements IMiniac
     public player_Status        = reactive(new PlayerStatus());
     public player_CurrentSong   = reactive(new Song());
     public player_Playlist      = reactive(new Array<Song>());
+    public player_Artists       = reactive(new Array<string>());
+    public player_Albums        = reactive(new Array<{key : string, value : string }>());
 
     public player_RequestStatus()      : void
     {
@@ -156,4 +160,15 @@ export class Miniac implements IMiniac
         this._socket?.send(JSON.stringify({ type: "Player:RequestPlaylist" }));
     }
 
+    public player_RequestArtists() : void
+    {
+        console.log("Miniac.player_RequestArtists");
+        this._socket?.send(JSON.stringify({ type: "Player:RequestArtists" }));
+    }
+    
+    public player_RequestAlbums(artists : Array<string>) : void
+    {
+        console.log("Miniac.player_RequestAlbums");
+        this._socket?.send(JSON.stringify({ type: "Player:RequestAlbums", artists: artists }));
+    }
 }

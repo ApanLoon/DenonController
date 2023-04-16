@@ -19,7 +19,9 @@ export const MpdEvent = Object.freeze(
 {
     Status:       "status",
     CurrentSong:  "currentsong",
-    PlaylistInfo: "playlistinfo"
+    PlaylistInfo: "playlistinfo",
+    Artists:      "artists",
+    Albums:       "albums"
 });
 
 
@@ -76,7 +78,7 @@ export class MpdClient extends EventEmitter
                 }
                 else if (msg.endsWith("OK"))
                 {
-                    this._data += msg;
+                    this._data += msg.replace(/\nOK$/, "\n");
 
                     let command = this._commandQueue.dequeueFirst();
                     if (command !== undefined)
@@ -232,7 +234,7 @@ export class MpdClient extends EventEmitter
         console.log("MpdClient.play");
         let command = this._commandQueue.enqueue(`play ${index}`, data =>
         {
-            console.log ("MpdClient.play ", data);
+            console.log ("MpdClient.play OK");
         });
 
         if (this._isIdle) this.noidle();
@@ -244,7 +246,7 @@ export class MpdClient extends EventEmitter
         let cmd = this._isPlaying ? `pause ${isOn ? 1 : 0}` : "play";
         let command = this._commandQueue.enqueue(cmd, data =>
         {
-            console.log (`MpdClient.pause ${isOn}`, data);
+            console.log (`MpdClient.pause ${isOn} OK`);
         });
 
         if (this._isIdle) this.noidle();
@@ -255,7 +257,7 @@ export class MpdClient extends EventEmitter
         console.log("MpdClient.stop");
         let command = this._commandQueue.enqueue("stop", data =>
         {
-            console.log ("MpdClient.stop ", data);
+            console.log ("MpdClient.stop OK");
         });
 
         if (this._isIdle) this.noidle();
@@ -266,7 +268,7 @@ export class MpdClient extends EventEmitter
         console.log("MpdClient.prev");
         let command = this._commandQueue.enqueue("previous", data =>
         {
-            console.log ("MpdClient.prev ", data);
+            console.log ("MpdClient.prev OK");
         });
 
         if (this._isIdle) this.noidle();
@@ -277,7 +279,7 @@ export class MpdClient extends EventEmitter
         console.log("MpdClient.next");
         let command = this._commandQueue.enqueue("next", data =>
         {
-            console.log ("MpdClient.next", data);
+            console.log ("MpdClient.next OK");
         });
 
         if (this._isIdle) this.noidle();
@@ -298,9 +300,107 @@ export class MpdClient extends EventEmitter
         let command = this._commandQueue.enqueue(`playlistinfo ${args}`, data =>
         {
             console.log ("MpdClient.playlistinfo OK");
-            const l = data.split(/^|\nfile\:/).map(x=>Tags.parse(x));
+            const l = data.split(/\n*file\:/).map(x=>Tags.parse(x));
             this.emit(MpdEvent.PlaylistInfo, l);
         });
+
+        if (this._isIdle) this.noidle();
+    }
+
+    artists()
+    {
+        console.log("MpdClient.artists");
+        this.list ("artist", "", [], data => 
+        {
+            console.log ("MpdClient.artists OK");
+            const l = data.split(/\n*Artist\:/).map(x =>
+            {
+                if (x.match(/^\s+$/)) return x;
+                return x.trim();
+            });
+            this.emit(MpdEvent.Artists, l);
+        });
+    }
+
+    _matchProp(prop, data)
+    {
+        return data.startsWith(prop)
+        ? data.substring(prop.length)
+        : undefined;
+    }
+
+    albums(artists)
+    {
+        console.log("MpdClient.albums");
+        let filter = "";
+        if (artists && artists.length > 0)
+        {
+            // NOTE: There is apparently no OR operator in the mpd expressions.
+            //       P OR Q = NOT( NOT(P) AND NOT(Q) )
+            filter = `\"(!( ${artists.map(x=>`(albumartist != '${x}')`).join(" AND ")} ))\"`;
+        }
+
+        this.list ("album", filter, ["albumartist"], data => 
+        {
+            console.log ("MpdClient.albums OK");
+            let l = [];
+            data.split("\n").forEach(x =>
+            {
+                let value = this._matchProp("AlbumArtist:", x);
+                if (value)
+                {
+                    l.push({ key: "artist", value: value });
+                    return;
+                }
+                value = this._matchProp("Album:", x);
+                if (value)
+                {
+                    l.push({ key: "album", value: value });
+                    return;
+                }
+            });
+
+            // let l = [];
+            // let current = undefined;
+            // data.split("\n").forEach(x =>
+            // {
+            //     if (x.startsWith("AlbumArtist:"))
+            //     {
+            //         if (current)
+            //         {
+            //             l.push(current);
+            //         }
+
+            //         let artist = x.substring(12);
+            //         artist = artist.match(/^\s+$/) ? artist : artist.trim();
+            //         current = { Artist: artist, Albums: [] };
+            //     }
+            //     else if (x.startsWith("Album:"))
+            //     {
+            //         let album = x.substring(6);
+            //         album = album.match(/^\s+$/) ? album : album.trim();
+            //         if (current)
+            //         {
+            //             current.Albums.push(album);
+            //         }
+            //     }
+            // });
+            // if (current)
+            // {
+            //     l.push(current);
+            // }
+
+            //console.log(l);
+            this.emit(MpdEvent.Albums, l);
+        });
+    }
+
+    list(type, filter, groups, onResponse)
+    {
+        let args = type;
+        if (filter && filter !== "")     args += ` ${filter}`;
+        if (groups && groups.length > 0) args += ` group ${groups.join(" group ")}`;
+        let command = this._commandQueue.enqueue(`list ${args}`, onResponse);
 
         if (this._isIdle) this.noidle();
     }

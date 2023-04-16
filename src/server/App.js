@@ -21,20 +21,24 @@ amp.on(DenonEvent.SelectedInput, input => miniacApi.amp_SendSelectedInput(amp_In
 player.on(MpdEvent.Status,       status => miniacApi.player_SendStatus      (playerStatusFromMpd(status)));
 player.on(MpdEvent.CurrentSong,  song   => miniacApi.player_SendCurrentSong (playerSongFromMpd(song)));
 player.on(MpdEvent.PlaylistInfo, list   => miniacApi.player_SendPlaylist    (playerPlaylistFromMpd(list)));
+player.on(MpdEvent.Artists,      list   => miniacApi.player_SendArtists     (list));
+player.on(MpdEvent.Albums,       list   => miniacApi.player_SendAlbums      (list));
 
 miniacApi.on(MiniacEvent.Amp_RequestPowerState,     ()      => amp.requestPowerState());
 miniacApi.on(MiniacEvent.Amp_SetPowerState,         (isOn)  => amp.setPowerState(isOn));
 miniacApi.on(MiniacEvent.Amp_RequestSelectedInput,  ()      => amp.requestSelectedInput());
 miniacApi.on(MiniacEvent.Amp_SetSelectedInput,      (input) => amp.setSelectedInput(amp_InputNameFromMiniac (input)));
 
-miniacApi.on(MiniacEvent.Player_RequestStatus,      ()      => player.status());
-miniacApi.on(MiniacEvent.Player_RequestCurrentSong, ()      => player.currentSong());
-miniacApi.on(MiniacEvent.Player_Play,               ()      => player.pause(false));
-miniacApi.on(MiniacEvent.Player_Pause,              ()      => player.pause(true));
-miniacApi.on(MiniacEvent.Player_Stop,               ()      => player.stop());
-miniacApi.on(MiniacEvent.Player_Next,               ()      => player.next());
-miniacApi.on(MiniacEvent.Player_Prev,               ()      => player.prev());
-miniacApi.on(MiniacEvent.Player_RequestPlaylist,    ()      => player.playlistinfo());
+miniacApi.on(MiniacEvent.Player_RequestStatus,      ()        => player.status());
+miniacApi.on(MiniacEvent.Player_RequestCurrentSong, ()        => player.currentSong());
+miniacApi.on(MiniacEvent.Player_Play,               ()        => player.pause(false));
+miniacApi.on(MiniacEvent.Player_Pause,              ()        => player.pause(true));
+miniacApi.on(MiniacEvent.Player_Stop,               ()        => player.stop());
+miniacApi.on(MiniacEvent.Player_Next,               ()        => player.next());
+miniacApi.on(MiniacEvent.Player_Prev,               ()        => player.prev());
+miniacApi.on(MiniacEvent.Player_RequestPlaylist,    ()        => player.playlistinfo());
+miniacApi.on(MiniacEvent.Player_RequestArtists,     ()        => player.artists());
+miniacApi.on(MiniacEvent.Player_RequestAlbums,      (artists) => player.albums(artists));
 
 amp.connect()
 .then (() =>
