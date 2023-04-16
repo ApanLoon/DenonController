@@ -37,7 +37,6 @@ function artistSelected()
         <MainMenu @menu-select="selection => emit('menu-select', selection)" />
         <local-header>Artist</local-header>
         <local-header>Album</local-header>
-        <local-header>Song</local-header>
         <select id="artist-selector" multiple @change="artistSelected()">
             <option v-for="artist in miniac.player_Artists">
                 {{ artist }}
@@ -45,15 +44,9 @@ function artistSelected()
         </select>
         <select id="album-selector" multiple>
             <option v-for="item in miniac.player_Albums"
-                    :disabled="item.key === 'artist'"
                     :class="{header : item.key === 'artist'}">
                 {{ item.value }}
             </option>
-        </select>
-        <select id="song-selector" multiple>
-            <!-- <option v-for="artist in miniac.player_Artists">
-                {{ artist }}
-            </option> -->
         </select>
     </local-page>
 </template>
@@ -62,10 +55,11 @@ function artistSelected()
 local-page
 {
     display: grid;
-    grid-template-areas: "page-title page-title menu"
-                         "artist-header album-header song-header"
-                         "artists albums songs";
-                         grid-template-rows: 4rem 2rem 345px; /*TODO: How do I make the third row fill the rest of the vp height and still be scrollable? */
+    grid-template-areas: "page-title    menu"
+                         "artist-header album-header"
+                         "artists       albums";
+    grid-template-columns: 1fr 1fr;                         
+    grid-template-rows: 4rem 2rem 345px; /*TODO: How do I make the third row fill the rest of the vp height and still be scrollable? */
     gap: 0.5em;
 }
 /* local-page > *
