@@ -19,6 +19,7 @@ export const MiniacEvent = Object.freeze(
     Amp_SetPowerState:         "amp:setpowerstate",   
     Amp_RequestSelectedInput:  "amp:selectedinput",   
     Amp_SetSelectedInput:      "amp:setselectedinput",
+
     Player_RequestStatus:      "player:status",       
     Player_RequestCurrentSong: "player:currentsong",  
     Player_Play:               "player:play",         
@@ -28,7 +29,11 @@ export const MiniacEvent = Object.freeze(
     Player_Prev:               "player:prev",
     Player_RequestPlaylist:    "player:playlist",
     Player_RequestArtists:     "player:artists",
-    Player_RequestAlbums:      "player:albums"
+    Player_RequestAlbums:      "player:albums",
+
+    Bluetooth_RequestStatus:   "bluetooth:status",
+    Bluetooth_SetPowered:      "bluetooth:powered",
+    Bluetooth_SetDiscoverable: "bluetooth:discoverable"
 });
 
 export class MiniacApi extends EventEmitter
@@ -65,6 +70,10 @@ export class MiniacApi extends EventEmitter
                     case "Player:RequestPlaylist":    this.emit(MiniacEvent.Player_RequestPlaylist);            break;
                     case "Player:RequestArtists":     this.emit(MiniacEvent.Player_RequestArtists);             break;
                     case "Player:RequestAlbums":      this.emit(MiniacEvent.Player_RequestAlbums, msg.artists); break;
+
+                    case "Bluetooth:RequestStatus":   this.emit(MiniacEvent.Bluetooth_RequestStatus);                       break;
+                    case "Bluetooth:SetPowered":      this.emit(MiniacEvent.Bluetooth_SetPowered,      msg.isPowered);      break;
+                    case "Bluetooth:SetDiscoverable": this.emit(MiniacEvent.Bluetooth_SetDiscoverable, msg.isDiscoverable); break;
                 }
             },
             (event, connection) =>
@@ -153,4 +162,18 @@ export class MiniacApi extends EventEmitter
             list: list
         }));
     }
+    
+    /// Bluetooth:
+    ///
+
+    bluetooth_SendStatus (status)
+    {
+        //console.log("MiniacApi.bluetooth_SendStatus: ", status);
+        this.connections.sendToAll(JSON.stringify(
+        {
+            type: "Bluetooth:Status",
+            status: status
+        }));
+    }
+
 }

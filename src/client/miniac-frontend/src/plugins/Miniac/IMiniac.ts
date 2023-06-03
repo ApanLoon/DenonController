@@ -2,6 +2,7 @@ import type { Ref } from "vue";
 import type { MiniacOptions } from "./MiniacOptions";
 import type { PlayerStatus } from "./PlayerStatus";
 import type { Song } from "./Song";
+import type { BluetoothStatus } from "./BluetoothStatus";
 
 export interface IMiniac
 {
@@ -41,4 +42,12 @@ export interface IMiniac
     player_RequestPlaylist()                      : void;
     player_RequestArtists()                       : void;
     player_RequestAlbums(artists : Array<string>) : void;
+
+    // Bluetooth:
+    bluetooth_status : BluetoothStatus;
+    
+    bluetooth_RequestStatus   ()               : void;
+    bluetooth_SetPowered      (isOn : boolean) : void;
+    bluetooth_SetDiscoverable (isOn : boolean) : void;
+    bluetooth_SetPairable     (isOn : boolean) : void;
 }

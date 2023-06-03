@@ -3,6 +3,7 @@ import type { MiniacOptions } from "./MiniacOptions";
 import { ref, reactive, type Ref } from "vue";
 import { PlayerStatus } from "./PlayerStatus";
 import { Song } from "./Song";
+import { BluetoothStatus } from "./BluetoothStatus";
 
 export class Miniac implements IMiniac
 {
@@ -47,6 +48,8 @@ export class Miniac implements IMiniac
                 case "Player:Playlist":    console.log("Miniac: Player playlist",     msg.list);   this.player_Playlist.splice(0, Infinity, ...msg.list);  break;
                 case "Player:Artists":     console.log("Miniac: Player artists",      msg.list);   this.player_Artists.splice (0, Infinity, ...msg.list);  break;
                 case "Player:Albums":      console.log("Miniac: Player albums",       msg.list);   this.player_Albums.splice  (0, Infinity, ...msg.list);  break;
+
+                case "Bluetooth:Status":   console.log("Miniac: Bluethooth status",   msg.status); this.bluetooth_status.copyFrom(msg.status);  break;
             }
         });
 
@@ -170,5 +173,32 @@ export class Miniac implements IMiniac
     {
         console.log("Miniac.player_RequestAlbums");
         this._socket?.send(JSON.stringify({ type: "Player:RequestAlbums", artists: artists }));
+    }
+
+    // Bluetooth:
+    public bluetooth_status = reactive (new BluetoothStatus());
+
+    public bluetooth_RequestStatus()
+    {
+        console.log("Miniac.bluetooth_RequestStatus");
+        this._socket?.send(JSON.stringify({ type: "Bluetooth:RequestStatus" }));
+    }
+
+    public bluetooth_SetPowered (isOn : boolean) : void
+    {
+        console.log("Miniac.bluetooth_SetPowered");
+        this._socket?.send(JSON.stringify({ type: "Bluetooth:SetPowered", isPowered: isOn }));
+    }
+
+    public bluetooth_SetDiscoverable (isOn : boolean) : void
+    {
+        console.log("Miniac.bluetooth_SetDiscoverable");
+        this._socket?.send(JSON.stringify({ type: "Bluetooth:SetDiscoverable", isDiscoverable: isOn }));
+    }
+
+    public bluetooth_SetPairable     (isOn : boolean) : void
+    {
+        console.log("Miniac.bluetooth_SetPairable");
+        this._socket?.send(JSON.stringify({ type: "Bluetooth:SetPairable", isPairable: isOn }));
     }
 }

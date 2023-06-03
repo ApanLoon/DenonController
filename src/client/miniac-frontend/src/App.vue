@@ -18,7 +18,8 @@ miniac.connect(() =>
   miniac.amp_RequestPowerState();
   miniac.amp_RequestSelectedInput();
   miniac.player_RequestStatus();
-  miniac.player_RequestCurrentSong()
+  miniac.player_RequestCurrentSong();
+  miniac.bluetooth_RequestStatus();
 });
 
 function selectPage(page : string) :void
