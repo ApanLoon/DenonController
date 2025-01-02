@@ -2,6 +2,7 @@
 import { DenonDevice, DenonEvent } from "./Denon/Denon.js";
 import { MpdClient, MpdEvent } from "./MpdClient/MpdClient.js";
 import { PlayerState } from "./MpdClient/Status.js";
+import { BluetoothController, BluetoothEvent } from "./Bluetooth/Bluetooth.js";
 import { MiniacApi, MiniacEvent } from "./MiniacApi/MiniacApi.js";
 import { readFileSync } from "fs";
 import Express from "express";
@@ -11,9 +12,10 @@ console.log ("App: Starting up...");
 const config = JSON.parse(readFileSync("config.json"));
 
 const server    = Express();
-const miniacApi = new MiniacApi   ({                           port: config.miniac_ApiPort });
-const amp       = new DenonDevice ({ host: config.amp_Host,    port: config.amp_Port       });
-const player    = new MpdClient   ({ host: config.player_Host, port: config.player_Port    });
+const miniacApi = new MiniacApi           ({                           port: config.miniac_ApiPort });
+const amp       = new DenonDevice         ({ host: config.amp_Host,    port: config.amp_Port       });
+const player    = new MpdClient           ({ host: config.player_Host, port: config.player_Port    });
+const bluetooth = new BluetoothController ({ });
 
 amp.on(DenonEvent.PowerState,    isOn  => miniacApi.amp_SendPowerState(isOn));
 amp.on(DenonEvent.SelectedInput, input => miniacApi.amp_SendSelectedInput(amp_InputNameFromDenon (input)));
@@ -21,20 +23,31 @@ amp.on(DenonEvent.SelectedInput, input => miniacApi.amp_SendSelectedInput(amp_In
 player.on(MpdEvent.Status,       status => miniacApi.player_SendStatus      (playerStatusFromMpd(status)));
 player.on(MpdEvent.CurrentSong,  song   => miniacApi.player_SendCurrentSong (playerSongFromMpd(song)));
 player.on(MpdEvent.PlaylistInfo, list   => miniacApi.player_SendPlaylist    (playerPlaylistFromMpd(list)));
+player.on(MpdEvent.Artists,      list   => miniacApi.player_SendArtists     (list));
+player.on(MpdEvent.Albums,       list   => miniacApi.player_SendAlbums      (list));
+
+bluetooth.on(BluetoothEvent.Status, status => miniacApi.bluetooth_SendStatus (status));
+bluetooth.connect();
 
 miniacApi.on(MiniacEvent.Amp_RequestPowerState,     ()      => amp.requestPowerState());
 miniacApi.on(MiniacEvent.Amp_SetPowerState,         (isOn)  => amp.setPowerState(isOn));
 miniacApi.on(MiniacEvent.Amp_RequestSelectedInput,  ()      => amp.requestSelectedInput());
 miniacApi.on(MiniacEvent.Amp_SetSelectedInput,      (input) => amp.setSelectedInput(amp_InputNameFromMiniac (input)));
 
-miniacApi.on(MiniacEvent.Player_RequestStatus,      ()      => player.status());
-miniacApi.on(MiniacEvent.Player_RequestCurrentSong, ()      => player.currentSong());
-miniacApi.on(MiniacEvent.Player_Play,               ()      => player.pause(false));
-miniacApi.on(MiniacEvent.Player_Pause,              ()      => player.pause(true));
-miniacApi.on(MiniacEvent.Player_Stop,               ()      => player.stop());
-miniacApi.on(MiniacEvent.Player_Next,               ()      => player.next());
-miniacApi.on(MiniacEvent.Player_Prev,               ()      => player.prev());
-miniacApi.on(MiniacEvent.Player_RequestPlaylist,    ()      => player.playlistinfo());
+miniacApi.on(MiniacEvent.Player_RequestStatus,      ()        => player.status());
+miniacApi.on(MiniacEvent.Player_RequestCurrentSong, ()        => player.currentSong());
+miniacApi.on(MiniacEvent.Player_Play,               ()        => player.pause(false));
+miniacApi.on(MiniacEvent.Player_Pause,              ()        => player.pause(true));
+miniacApi.on(MiniacEvent.Player_Stop,               ()        => player.stop());
+miniacApi.on(MiniacEvent.Player_Next,               ()        => player.next());
+miniacApi.on(MiniacEvent.Player_Prev,               ()        => player.prev());
+miniacApi.on(MiniacEvent.Player_RequestPlaylist,    ()        => player.playlistinfo());
+miniacApi.on(MiniacEvent.Player_RequestArtists,     ()        => player.artists());
+miniacApi.on(MiniacEvent.Player_RequestAlbums,      (artists) => player.albums(artists));
+
+miniacApi.on(MiniacEvent.Bluetooth_RequestStatus,   ()        => bluetooth.requestStatus());
+miniacApi.on(MiniacEvent.Bluetooth_SetPowered,      (isOn)    => bluetooth.setPowered(isOn));
+miniacApi.on(MiniacEvent.Bluetooth_SetDiscoverable, (isOn)    => bluetooth.setDiscoverable(isOn));
 
 amp.connect()
 .then (() =>

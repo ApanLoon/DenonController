@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import MainMenu from "./MainMenu.vue";
 import Amplifier from "./Amplifier.vue";
+import Bluetooth from "./Bluetooth.vue";
 import Clock from "./Clock.vue";
 import Player from "./Player.vue";
 
@@ -11,6 +12,7 @@ const emit = defineEmits<{(e: 'menu-select', item: string): void }>();
   <local-page>
     <MainMenu @menu-select="selection => emit('menu-select', selection)" />
     <Amplifier style="grid-area: amplifier;" />
+    <Bluetooth style="grid-area: bluetooth;" />
     <Clock style="grid-area: clock;" />
     <Player style="grid-area: player;" />
   </local-page>
@@ -20,7 +22,9 @@ const emit = defineEmits<{(e: 'menu-select', item: string): void }>();
 local-page
 {
   display: grid;
-  grid-template-areas: "amplifier menu" "clock clock" "player player";
+  grid-template-areas: "amplifier bluetooth menu"
+                       "clock     clock     clock"
+                       "player    player    player";
   gap: 0.5em;
 }
 

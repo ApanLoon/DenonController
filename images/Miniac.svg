@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="800"
+   height="480"
+   viewBox="0 0 211.66667 127"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   sodipodi:docname="Miniac.svg"
+   inkscape:export-filename="Miniac.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="1.104894"
+     inkscape:cx="386.91493"
+     inkscape:cy="215.40527"
+     inkscape:window-width="1920"
+     inkscape:window-height="1057"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2">
+    <rect
+       x="168.34194"
+       y="202.73438"
+       width="822.70334"
+       height="393.70292"
+       id="rect292" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#000000;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:round"
+       id="rect236"
+       width="211.66666"
+       height="127"
+       x="0"
+       y="0" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-48.039965,-28.798544)"
+       id="text290"
+       style="font-weight:bold;font-size:192px;font-family:Vecna;-inkscape-font-specification:'Vecna, Bold';text-align:center;letter-spacing:-13px;white-space:pre;shape-inside:url(#rect292);shape-padding:0;display:inline;fill:#000000;stroke-width:0.377953;stroke-linecap:round;stroke-linejoin:round"><tspan
+         x="270.89648"
+         y="417.56364"
+         id="tspan2383"><tspan
+           style="font-family:Arial;-inkscape-font-specification:'Arial Bold';fill:#ffffff"
+           id="tspan2379">MINIA</tspan><tspan
+           style="fill:#fe0000"
+           id="tspan2381">C</tspan></tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:round"
+       id="rect1159"
+       width="10.77592"
+       height="3.8314383"
+       x="64.149796"
+       y="52.342339" />
+  </g>
+</svg>
